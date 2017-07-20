@@ -5,11 +5,11 @@ module.exports = function (config) {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'test/loadtests.js'
+            'loadtests.js'
         ],
         exclude: [],
         preprocessors: {
-            'test/loadtests.js': ['webpack', 'sourcemap']
+            'loadtests.js': ['webpack', 'sourcemap']
         },
         webpack: {
             module: {
@@ -17,8 +17,7 @@ module.exports = function (config) {
                     {
                         test: /\.js$/,
                         include: [
-                            path.resolve(__dirname, 'src'),
-                            path.resolve(__dirname, 'test')
+                            path.resolve(__dirname, 'src')
                         ],
                         use: [{
                             loader: 'babel-loader',
