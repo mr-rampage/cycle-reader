@@ -4,3 +4,4 @@ dist/
 dev/reports/
 npm-debug.log
 docs/sass
+.swp

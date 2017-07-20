@@ -13,8 +13,6 @@ const config = {
     context: path.resolve(__dirname, 'src'),
     entry: {
         index: './index.js',
-        uikit: './uikit.js',
-        contact: './contact.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
