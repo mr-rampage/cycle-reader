@@ -54,5 +54,7 @@
     "webpack": "^3.3.0",
     "webpack-dev-server": "^2.5.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "rxjs": "^5.4.2"
+  }
 }
