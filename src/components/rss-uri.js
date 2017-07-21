@@ -1,5 +1,6 @@
 import Rx from 'rxjs/Rx';
-import { fragmentFromString, SingletonFactory } from './component-utils.js';
+import { DomNode } from './dom-node';
+import { ComponentStream } from './component-stream';
 
 const template = `
 <form>
@@ -9,14 +10,14 @@ const template = `
 </form>
 `;
 
-export const RssUri = SingletonFactory(createRssUriStream);
+export function RssUri() {
+  const node = DomNode(template);
 
-function createRssUriStream(parent = document.body) {
-  const node = parent.appendChild(fragmentFromString(template))
   const stream = Rx.Observable.fromEvent(node, 'submit');
   stream.subscribe(event => event.preventDefault());
-  return stream
+
+  return ComponentStream(node, stream
     .map(event => event.target.elements.feedUri.value)
-    .distinctUntilChanged();
+    .distinctUntilChanged());
 }
 
