@@ -6,6 +6,7 @@ const template = `
 <form>
   <label>Add feed</label>
   <input type='text' name='feedUri' />
+  <input type='reset' value='Reset'/>
   <input type='submit' value='Add feed'/>
 </form>
 `;
@@ -13,11 +14,12 @@ const template = `
 export function RssUri() {
   const node = DomNode(template);
 
-  const stream = Rx.Observable.fromEvent(node, 'submit');
-  stream.subscribe(event => event.preventDefault());
+  const formStream = Rx.Observable.fromEvent(node, 'submit');
+  formStream.subscribe(event => event.preventDefault());
 
-  return ComponentStream(node, stream
-    .map(event => event.target.elements.feedUri.value)
-    .distinctUntilChanged());
+  const feedStream = formStream
+    .pluck('target', 'elements', 'feedUri', 'value')
+    .distinctUntilChanged();
+
+  return ComponentStream(node, feedStream);
 }
-
