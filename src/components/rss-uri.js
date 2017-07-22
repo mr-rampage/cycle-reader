@@ -2,24 +2,32 @@ import Rx from 'rxjs/Rx';
 import { DomNode } from './dom-node';
 import { ComponentStream } from './component-stream';
 
+const INPUT_NAME = 'feedUri';
+
 const template = `
 <form>
   <label>Add feed</label>
-  <input type='text' name='feedUri' />
+  <input name='${INPUT_NAME}' />
   <input type='reset' value='Reset'/>
   <input type='submit' value='Add feed'/>
 </form>
 `;
 
 export function RssUri() {
-  const node = DomNode(template);
+  const form = DomNode(template);
 
-  const formStream = Rx.Observable.fromEvent(node, 'submit');
-  formStream.subscribe(event => event.preventDefault());
+  const formStream = Rx.Observable.fromEvent(form, 'submit')
+    .do(event => event.preventDefault())
+    .map(event => ({event: event, value: event.srcElement.elements[INPUT_NAME].value}))
+    .share();
+
+  formStream
+    .pluck('event', 'target', 'elements', INPUT_NAME)
+    .subscribe(input => input.value = '');
 
   const feedStream = formStream
-    .pluck('target', 'elements', 'feedUri', 'value')
+    .pluck('value')
     .distinctUntilChanged();
 
-  return ComponentStream(node, feedStream);
+  return ComponentStream(form, feedStream);
 }
