@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "prestart": "npm rebuild node-sass",
-    "start": "webpack-dev-server --inline --content-base dist/ --open",
+    "start": "webpack-dev-server --inline --content-base dist/ --open --compress",
     "eslint": "./node_modules/.bin/eslint src/*.js",
     "accessibility": "node ./dev/accessibility-validation.js",
     "htmllint": "node ./dev/html-validator.js",
     "sasslint": "node ./node_modules/sass-lint/bin/sass-lint.js -v -q",
     "test": "npm run build && karma start && npm run eslint && npm run accessibility && npm run htmllint && npm run sasslint",
     "build": "rm -rf dist/ && webpack -p",
+    "build:prod": "rm -rf dist/ && webpack -p --optimize-minimize",
     "sassdoc": "node ./dev/sassdoc.js",
     "docsserver": "npm run sassdoc && webpack-dev-server --port 8010 --config webpack.docs.config.js --content-base ./docs/ --open"
   },

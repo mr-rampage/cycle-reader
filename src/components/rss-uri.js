@@ -8,7 +8,6 @@ const template = `
 <form>
   <label>Add feed</label>
   <input name='${INPUT_NAME}' />
-  <input type='reset' value='Reset'/>
   <input type='submit' value='Add feed'/>
 </form>
 `;
