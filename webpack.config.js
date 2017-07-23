@@ -1,12 +1,12 @@
 const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const extractCSS = new ExtractTextPlugin('assets/styles/[name].bundle.css');
+const extractCSS = new ExtractTextPlugin('styles/[name].bundle.css');
 const postCSSOptions = require('./postcss.config.js');
 
 const extractCommons = new webpack.optimize.CommonsChunkPlugin({
   name: 'commons',
-  filename: 'assets/js/commons.js'
+  filename: 'js/commons.js'
 });
 
 const config = {
@@ -16,7 +16,7 @@ const config = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'assets/js/[name].bundle.js'
+    filename: 'js/[name].bundle.js'
   },
   module: {
     rules: [
@@ -51,7 +51,7 @@ const config = {
       {
         test: /\.(png|jpg)$/,
         use: [{
-          loader: 'file-loader?name=assets/images/[name].[ext]'
+          loader: 'file-loader?name=images/[name].[ext]'
         }]
       },
       {
@@ -74,6 +74,13 @@ const config = {
             }
           }
         ]
+      },
+      {
+        test: /\.service-worker.js$/,
+        use: [{
+          loader: 'file-loader?name=[name].[ext]'
+        }]
+
       }
 
     ]
