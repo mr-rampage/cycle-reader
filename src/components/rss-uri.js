@@ -17,6 +17,7 @@ export function RssUri() {
 
   const formStream = Rx.Observable.fromEvent(form, 'submit')
     .do(event => event.preventDefault())
+    .filter(event => hasValidUri(event.srcElement.elements[INPUT_NAME].value))
     .map(event => ({event: event, value: event.srcElement.elements[INPUT_NAME].value}))
     .share();
 
@@ -29,4 +30,8 @@ export function RssUri() {
     .distinctUntilChanged();
 
   return ComponentStream(form, feedStream);
+}
+
+function hasValidUri(uri) {
+  return uri && /^(http)/i.test(uri);
 }
