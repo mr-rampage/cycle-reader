@@ -6,13 +6,13 @@ import Rx from 'rxjs';
 
 const feedRepository = RssFeedRepository('feeds', 'uri');
 
-export function RssFeed(newFeed$) {
+export function RssFeed(addedFeed$) {
   const rssFeedContainer = DomNode('<ul></ul>');
 
-  const article$ = newFeed$.flatMap(RssFeedService.fetch)
+  const article$ = addedFeed$.flatMap(RssFeedService.fetch)
     .filter(feed => !!feed.query.results.item);
 
-  const newArticle$ = Rx.Observable.combineLatest(newFeed$, article$);
+  const newArticle$ = Rx.Observable.combineLatest(addedFeed$, article$);
   RenderArticleObserver(newArticle$, rssFeedContainer);
   feedRepository.Insert$(AddedFeed$(newArticle$)).subscribe(console.info);
 

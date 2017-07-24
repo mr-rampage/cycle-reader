@@ -14,24 +14,27 @@ const template = `
 
 export function RssUri() {
   const form = DomNode(template);
-
-  const form$ = Rx.Observable.fromEvent(form, 'submit')
-    .do(event => event.preventDefault())
-    .filter(event => hasValidUri(event.srcElement.elements[INPUT_NAME].value))
-    .map(event => ({event: event, value: event.srcElement.elements[INPUT_NAME].value}))
-    .share();
-
-  form$
-    .pluck('event', 'target', 'elements', INPUT_NAME)
-    .subscribe(input => input.value = '');
-
-  const newFeed$ = form$
-    .pluck('value')
-    .distinctUntilChanged();
-
-  return ComponentStream(form, newFeed$);
+  const form$ = createForm$(form);
+  clearInputObserver(form$);
+  return ComponentStream(form, createNewFeed$(form$));
 }
 
 function hasValidUri(uri) {
   return uri && /^(http)/i.test(uri);
+}
+
+function createForm$(form) {
+  return Rx.Observable.fromEvent(form, 'submit')
+    .do(event => event.preventDefault())
+    .filter(event => hasValidUri(event.srcElement.elements[INPUT_NAME].value))
+    .map(event => ({event: event, value: event.srcElement.elements[INPUT_NAME].value}))
+    .share();
+}
+
+function clearInputObserver(form$) {
+  form$.pluck('event', 'target', 'elements', INPUT_NAME).subscribe(input => input.value = '');
+}
+
+function createNewFeed$(form$) {
+  return form$.pluck('value').distinctUntilChanged();
 }

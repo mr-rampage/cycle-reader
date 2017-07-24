@@ -7,12 +7,7 @@ import { RssFeed } from './rss-feed';
 export function RssList() {
   const rssUri = RssUri();
   const rssList = AppendableItemList(rssUri.stream);
-
-  const newFeed$ = rssList.stream
-    .filter(event => event.added)
-    .pluck('added');
-
-  const rssFeed = RssFeed(newFeed$);
+  const rssFeed = RssFeed(createAddedFeed$(rssList.stream));
 
   const rssListContainer = DomNode('<div></div>');
   rssListContainer.appendChild(rssList.component);
@@ -22,3 +17,6 @@ export function RssList() {
   return ComponentStream(rssListContainer, rssList.stream);
 }
 
+function createAddedFeed$(rssList$) {
+  return rssList$.filter(event => event.added).pluck('added');
+}

@@ -4,13 +4,9 @@ import { ComponentStream } from './component-stream';
 
 export function AppendableItemList(addItem$) {
   const list = DomNode('<ul></ul>');
+  addItemObservable(addItem$, list);
 
-  addItem$.subscribe(item => list.appendChild(Item(item)));
-
-  const removeItem$ = Rx.Observable.fromEvent(list, 'click')
-    .filter(event => /li/i.test(event.srcElement.tagName))
-    .pluck('srcElement');
-
+  const removeItem$ = createRemoveItem$(list);
   removeItem$.subscribe(item => list.removeChild(item));
 
   const itemList$ = Rx.Observable.merge(
@@ -23,4 +19,12 @@ export function AppendableItemList(addItem$) {
 
 function Item(description) {
   return DomNode(`<li>${description}</li>`);
+}
+
+function createRemoveItem$(list) {
+  return Rx.Observable.fromEvent(list, 'click').filter(event => /li/i.test(event.srcElement.tagName)).pluck('srcElement');
+}
+
+function addItemObservable(addItem$, list) {
+  return addItem$.subscribe(item => list.appendChild(Item(item)));
 }
