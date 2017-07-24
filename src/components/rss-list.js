@@ -2,7 +2,6 @@ import { AppendableItemList } from './item-list';
 import { RssUri } from './rss-uri';
 import { DomNode } from './dom-node';
 import { ComponentStream } from './component-stream';
-import { RssFeedService } from './rss-feed.service';
 import { RssFeed } from './rss-feed';
 
 export function RssList() {
@@ -11,8 +10,7 @@ export function RssList() {
 
   const newFeed$ = rssList.stream
     .filter(event => event.added)
-    .pluck('added')
-    .flatMap(RssFeedService.fetch);
+    .pluck('added');
 
   const rssFeed = RssFeed(newFeed$);
 
