@@ -8,9 +8,9 @@ export function RssFeed(feed$) {
     .do(console.info)
     .subscribe(showFeeds.bind(null, removeChildren(rssFeedContainer)));
 
-  const newFeed$ = feed$.pluck('query', 'count');
+  const newArticle$ = feed$.pluck('query', 'count');
 
-  return ComponentStream(rssFeedContainer, newFeed$);
+  return ComponentStream(rssFeedContainer, newArticle$);
 }
 
 function showFeeds(feed, articles) {

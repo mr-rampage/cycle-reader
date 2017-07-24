@@ -13,12 +13,12 @@ export function AppendableItemList(addItem$) {
 
   removeItem$.subscribe(item => list.removeChild(item));
 
-  const stream = Rx.Observable.merge(
+  const itemList$ = Rx.Observable.merge(
     removeItem$.map(item => ({'removed': item.textContent})),
     addItem$.map(item => ({'added': item}))
   ).share();
 
-  return ComponentStream(list, stream);
+  return ComponentStream(list, itemList$);
 }
 
 function Item(description) {

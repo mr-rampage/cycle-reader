@@ -15,21 +15,21 @@ const template = `
 export function RssUri() {
   const form = DomNode(template);
 
-  const formStream = Rx.Observable.fromEvent(form, 'submit')
+  const form$ = Rx.Observable.fromEvent(form, 'submit')
     .do(event => event.preventDefault())
     .filter(event => hasValidUri(event.srcElement.elements[INPUT_NAME].value))
     .map(event => ({event: event, value: event.srcElement.elements[INPUT_NAME].value}))
     .share();
 
-  formStream
+  form$
     .pluck('event', 'target', 'elements', INPUT_NAME)
     .subscribe(input => input.value = '');
 
-  const feedStream = formStream
+  const newFeed$ = form$
     .pluck('value')
     .distinctUntilChanged();
 
-  return ComponentStream(form, feedStream);
+  return ComponentStream(form, newFeed$);
 }
 
 function hasValidUri(uri) {
