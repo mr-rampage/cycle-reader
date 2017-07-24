@@ -4,14 +4,13 @@ import { DomNode } from './dom-node';
 export function RssFeed(feed$) {
   const rssFeedContainer = DomNode('<ul></ul>');
 
-  const newFeed$ = feed$.filter(response => response);
-
-  newFeed$.filter(response => response)
-    .pluck('query', 'results', 'item')
+  feed$.pluck('query', 'results', 'item')
     .do(console.info)
     .subscribe(showFeeds.bind(null, removeChildren(rssFeedContainer)));
 
-  return ComponentStream(rssFeedContainer, newFeed$.pluck('query', 'count'));
+  const newFeed$ = feed$.pluck('query', 'count');
+
+  return ComponentStream(rssFeedContainer, newFeed$);
 }
 
 function showFeeds(feed, articles) {
