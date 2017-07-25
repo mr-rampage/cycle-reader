@@ -1,17 +1,25 @@
 import 'whatwg-fetch';
 import Rx from 'rxjs/Rx';
+import { xml2js } from 'xml-js';
 
-
+//const feedRepository = RssFeedRepository('feeds', 'uri');
+// feedRepository.Insert$(AddedFeed$(newArticle$)).subscribe(console.info);
 const EXTERNAL_REQUEST = { mode: 'cors', method: 'GET'};
 
 export const RssFeedService = {
   fetch: feedUri => Rx.Observable.fromPromise(requestFeed(feedUri))
-}
+};
 
-function toYql(feedUri) {
-  return `https://query.yahooapis.com/v1/public/yql?q=select * from rss where url='${feedUri}'&format=json&diagnostics=true&env=store://datatables.org/alltableswithkeys&callback=`
+function proxy(feedUri) {
+  return `http://crossorigin.me/${feedUri}`
 }
 
 function requestFeed(feedUri) {
-  return fetch(toYql(feedUri), EXTERNAL_REQUEST).then(response => response.json());
+  return fetch(proxy(feedUri), EXTERNAL_REQUEST)
+    .then(response => xml2js(response.text(), {compact: true}));
 }
+
+//function AddedFeed$(newArticle$) {
+//  return newArticle$.map(([uri]) => ({'uri': uri}));
+//}
+
