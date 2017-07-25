@@ -1,25 +1,28 @@
 import 'whatwg-fetch';
 import Rx from 'rxjs/Rx';
 import { xml2js } from 'xml-js';
+import { RssFeedRepository } from './rss-feed.repository';
 
-//const feedRepository = RssFeedRepository('feeds', 'uri');
-// feedRepository.Insert$(AddedFeed$(newArticle$)).subscribe(console.info);
-const EXTERNAL_REQUEST = { mode: 'cors', method: 'GET'};
+const feedRepository = RssFeedRepository('feeds', 'uri');
 
 export const RssFeedService = {
-  fetch: feedUri => Rx.Observable.fromPromise(requestFeed(feedUri))
+  fetch$: Fetch$
 };
+
+function Fetch$(feedUri$) {
+  feedRepository.Insert$(feedUri$.map(uri => ({ 'uri': uri }))).subscribe(console.info);
+
+  return feedUri$.flatMap(feedUri => Rx.Observable.fromPromise(requestFeed(feedUri)))
+    .map(xml => xml2js(xml, {compact: true, ignoreAttributes: true, ignoreDeclaration: true, ignoreDoctype: true}));
+}
+
+function requestFeed(feedUri) {
+  const headers = new Headers();
+  headers.set('Accept', 'application/rss+xml');
+  const requestOptions = { mode: 'cors', method: 'GET', headers: headers };
+  return fetch(proxy(feedUri), requestOptions).then(response => response.text());
+}
 
 function proxy(feedUri) {
   return `http://crossorigin.me/${feedUri}`
 }
-
-function requestFeed(feedUri) {
-  return fetch(proxy(feedUri), EXTERNAL_REQUEST)
-    .then(response => xml2js(response.text(), {compact: true}));
-}
-
-//function AddedFeed$(newArticle$) {
-//  return newArticle$.map(([uri]) => ({'uri': uri}));
-//}
-
