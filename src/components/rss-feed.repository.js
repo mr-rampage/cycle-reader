@@ -17,20 +17,20 @@ function IndexedDB$(name, schema) {
   const request = window.indexedDB.open(name, 1);
   Rx.Observable.fromEvent(request, 'success').first().pluck('target', 'result')
     .subscribe(database => db$.next(database));
-  Rx.Observable.fromEvent(request, 'upgradeneeded').subscribe(event => initializeStore(event.target.result, schema));
+  Rx.Observable.fromEvent(request, 'upgradeneeded')
+    .subscribe(event => initializeStore(event.target.result, schema));
 
   return db$;
 }
 
 function Insert$(table) {
-  return function add(addItem$) {
-    return Rx.Observable.combineLatest(
-      addItem$,
-      rxReaderDB$
-    ).flatMap(([record, database]) => {
-      const transaction = database.transaction(table, 'readwrite').objectStore(table).add(record);
-      return Rx.Observable.fromEvent(transaction, 'success')
-    });
+  return function add(record) {
+    return rxReaderDB$
+      .do(() => console.info('persisting', record))
+      .flatMap(database => {
+        const transaction = database.transaction(table, 'readwrite').objectStore(table).add(record);
+        return Rx.Observable.fromEvent(transaction, 'success');
+      });
   }
 }
 
