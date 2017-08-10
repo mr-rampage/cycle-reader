@@ -1,6 +1,7 @@
 import Rx from 'rxjs/Rx';
 import { DomNode } from './dom-node';
 import { ComponentStream } from './component-stream';
+import { RssSubscriber } from './rss-subscriber';
 
 const INPUT_NAME = 'feedUri';
 
@@ -32,7 +33,8 @@ function createForm$(form) {
 }
 
 function clearInputObserver(form$) {
-  form$.pluck('event', 'target', 'elements', INPUT_NAME).subscribe(input => input.value = '');
+  form$.pluck('event', 'target', 'elements', INPUT_NAME)
+    .subscribe(RssSubscriber(input => input.value = ''));
 }
 
 function createNewFeed$(form$) {
