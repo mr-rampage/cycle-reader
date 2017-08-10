@@ -14,7 +14,8 @@ export const RssFeedService = {
 function Fetch$(feedUri$) {
   const feed$ = feedUri$
     .flatMap(feedUri => Rx.Observable.fromPromise(requestFeed(feedUri)))
-    .filter(response => response.ok).share();
+    .filter(response => response.ok)
+    .share();
 
   HotPersist$(feed$);
 

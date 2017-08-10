@@ -4,7 +4,8 @@ const rxReaderDB$ = RxReaderDB('rxReader', {'feeds': 'uri'});
 
 export function RssFeedRepository(tablename) {
   return {
-    Insert$: Insert$(tablename)
+    Insert$: Insert$(tablename),
+    FindAll$: FindAll(tablename)
   };
 }
 
@@ -25,13 +26,22 @@ function IndexedDB$(name, schema) {
 
 function Insert$(table) {
   return function add(record) {
-    return rxReaderDB$
-      .do(() => console.info('persisting', record))
-      .flatMap(database => {
-        const transaction = database.transaction(table, 'readwrite').objectStore(table).add(record);
-        return Rx.Observable.fromEvent(transaction, 'success');
-      });
+    return ObjectStore$(table, 'readwrite')
+      .map(objectStore => objectStore.add(record))
+      .flatMap(transaction => Rx.Observable.fromEvent(transaction, 'success'));
   }
+}
+
+function FindAll(table) {
+  return function() {
+    return ObjectStore$(table, 'read')
+      .map(objectStore => objectStore.getAll())
+      .flatMap(transaction => Rx.Observable.fromEvent(transaction, 'success'));
+  }
+}
+
+function ObjectStore$(table, access) {
+  return rxReaderDB$.map(database => database.transaction(table, access).objectStore(table));
 }
 
 function initializeStore(database, schema) {
