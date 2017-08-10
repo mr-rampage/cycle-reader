@@ -5,17 +5,11 @@ import Rx from 'rxjs';
 
 export function RssFeed(addedFeed$) {
   const rssFeedContainer = DomNode('<ul></ul>');
-  const article$ = Article$(addedFeed$);
+  const article$ = RssFeedService.fetch$(addedFeed$);
   RenderArticleObserver(article$, rssFeedContainer);
 
   const newArticle$ = Rx.Observable.combineLatest(addedFeed$, article$);
   return ComponentStream(rssFeedContainer, newArticle$);
-}
-
-function Article$(addedFeed$) {
-  return RssFeedService.fetch$(addedFeed$)
-    .filter(feed => !!feed.rss.channel.item)
-    .pluck('rss', 'channel', 'item');
 }
 
 function RenderArticleObserver(article$, rootNode) {
