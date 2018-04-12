@@ -1,6 +1,6 @@
 // import assert from 'assert'
 
-// describe('App', function () {
+// describe('main', function () {
 //   it('should test something', function () {
 //     // TODO: Add your tests here
 //   })
