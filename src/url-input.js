@@ -1,4 +1,6 @@
 import { div, input, p } from '@cycle/dom'
+import * as most from 'most'
+import { ValidMarker } from './valid-marker'
 
 const intent = sources => sources.DOM
   .select('.name')
@@ -6,15 +8,23 @@ const intent = sources => sources.DOM
 
 const isUrl = new RegExp('^(https?|ftp):\\/\\/[^\\s/$.?#].[^\\s]*$', 'i')
 
-const model = intent$ => intent$
+const textModel = intent$ => intent$
   .map(event => event.target.value)
   .filter(input => isUrl.test(input))
   .startWith('')
 
-const view = model$ => model$.map(data =>
+const validModel = intent$ => intent$
+  .map(event => event.target.value)
+  .map(input => isUrl.test(input))
+  .startWith(false)
+
+const model = intent$ => most.combine((value, valid) => ([value, valid]), textModel(intent$), validModel(intent$))
+
+const view = model$ => model$.map(([data, isValid]) =>
   div(`.name`, [
     p(`${data}`),
-    input()
+    input(),
+    ValidMarker(isValid)
   ])
 )
 
