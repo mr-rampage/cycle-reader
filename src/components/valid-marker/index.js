@@ -1,6 +1,6 @@
 import { p } from '@cycle/dom'
 
-export function ValidMarkerComponent (sources) {
+export function ValidMarker (sources) {
   const vdom$ = sources.props
     .startWith(false)
     .map(isValid => isValid ? 'Yes' : 'No')

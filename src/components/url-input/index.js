@@ -1,5 +1,5 @@
 import { div, input, p } from '@cycle/dom'
-import { ValidMarkerComponent } from '../valid-marker/valid-marker-component'
+import { ValidMarker } from '../valid-marker'
 import xs from 'xstream'
 
 const onUrlInput = sources => sources.DOM
@@ -16,8 +16,8 @@ const validUrls = intent$ => intent$
 const urlValidity = intent$ => intent$
   .map(input => isUrl.test(input))
 
-export function UrlInputComponent (sources) {
-  const indicatorVDom$ = ValidMarkerComponent({...sources, props: urlValidity(onUrlInput(sources))})
+export function UrlInput (sources) {
+  const indicatorVDom$ = ValidMarker({...sources, props: urlValidity(onUrlInput(sources))})
 
   const render = model$ => xs.combine(model$, indicatorVDom$.DOM)
     .map(([url, indicatorVDom]) =>
