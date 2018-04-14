@@ -1,6 +1,6 @@
 import { div, input, p } from '@cycle/dom'
 import { ValidMarkerComponent } from './valid-marker-component'
-import * as most from 'most'
+import xs from 'xstream'
 
 const onUrlInput = sources => sources.DOM
   .select('.name')
@@ -19,7 +19,7 @@ const urlValidity = intent$ => intent$
 export function UrlInputComponent (sources) {
   const indicatorVDom$ = ValidMarkerComponent({...sources, props: urlValidity(onUrlInput(sources))})
 
-  const render = model$ => most.combine((a, b) => [a, b], model$, indicatorVDom$.DOM)
+  const render = model$ => xs.combine(model$, indicatorVDom$.DOM)
     .map(([url, indicatorVDom]) =>
       div(`.name`, [
         p(`${url}`),
