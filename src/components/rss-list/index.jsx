@@ -14,10 +14,10 @@ export function RssList ({HTTP, props}) {
   const response$ = HTTP
     .select('rss')
     .flatten()
+    .map(response => JSON.parse(response.text))
+    .map(response => xml2js(response.body, XML2JS_CONFIG))
 
   const vdom$ = response$
-    .map(({text}) => JSON.parse(text))
-    .map(response => xml2js(response.body, XML2JS_CONFIG))
     .map(response => (
       <pre>{JSON.stringify(response, null, 2)}</pre>
     ))
