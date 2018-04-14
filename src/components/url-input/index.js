@@ -1,9 +1,8 @@
-import { div, input, p } from '@cycle/dom'
 import { ValidMarker } from '../valid-marker'
 import xs from 'xstream'
 
 const onUrlInput = sources => sources.DOM
-  .select('.name')
+  .select('.uk-search-input')
   .events('input')
   .map(event => event.target.value)
 
@@ -17,15 +16,15 @@ const urlValidity = intent$ => intent$
   .map(input => isUrl.test(input))
 
 export function UrlInput (sources) {
-  const indicatorVDom$ = ValidMarker({...sources, props: urlValidity(onUrlInput(sources))})
+  const indicatorVDom$ = ValidMarker({props: urlValidity(onUrlInput(sources))})
 
   const render = model$ => xs.combine(model$, indicatorVDom$.DOM)
     .map(([url, indicatorVDom]) =>
-      div(`.name`, [
-        p(`${url}`),
-        input(),
-        indicatorVDom
-      ])
+      <form className="uk-search uk-search-large">
+        <span uk-search-icon></span>
+        <input className="uk-search-input" type="search" placeholder="Search"/>
+        {indicatorVDom}
+      </form>
     )
 
   return {
