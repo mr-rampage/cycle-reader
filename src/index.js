@@ -1,7 +1,7 @@
-import {run} from '@cycle/most-run'
-import {makeDOMDriver} from '@cycle/dom'
-import { UrlInput } from './url-input'
+import { run } from '@cycle/most-run'
+import { makeDOMDriver } from '@cycle/dom'
+import { UrlInputComponent } from './url-input-component'
 
-run(UrlInput, {
+run(UrlInputComponent, {
   DOM: makeDOMDriver('#root')
 })
