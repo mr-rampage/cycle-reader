@@ -1,5 +1,5 @@
 import { div, input, p } from '@cycle/dom'
-import { ValidMarkerComponent } from './valid-marker-component'
+import { ValidMarkerComponent } from '../valid-marker/valid-marker-component'
 import xs from 'xstream'
 
 const onUrlInput = sources => sources.DOM
@@ -28,9 +28,7 @@ export function UrlInputComponent (sources) {
       ])
     )
 
-  const sinks = {
+  return {
     DOM: render(validUrls(onUrlInput(sources)))
   }
-
-  return sinks
 }
