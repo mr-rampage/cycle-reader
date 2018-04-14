@@ -1,4 +1,4 @@
-import { ValidMarker } from '../valid-marker'
+import { ValidMarker } from '../valid-marker/index'
 import xs from 'xstream'
 
 const onUrlInput = sources => sources.DOM
@@ -27,7 +27,10 @@ export function UrlInput (sources) {
       </form>
     )
 
+  const url$ = validUrls(onUrlInput(sources))
+
   return {
-    DOM: render(validUrls(onUrlInput(sources)))
+    DOM: render(url$),
+    value: url$
   }
 }
