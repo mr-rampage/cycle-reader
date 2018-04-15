@@ -1,6 +1,9 @@
 import { UrlInput } from './components/url-input/index'
 import xs from 'xstream'
 import { RssList } from './components/rss-list'
+import { proxied } from './domain/proxy-request'
+import { xmlResponseAdapter } from './domain/xml-json.adapter'
+import { feed } from './domain/feed'
 
 function old (sources) {
   const intent = sources$ => UrlInput(sources$)
@@ -19,12 +22,13 @@ function old (sources) {
 }
 
 export function main (sources) {
-  const intent = sources$ => RssList({...sources$, props: {url$: xs.of('http://kotaku.com/rss')}})
+  const rssSources = sources$ => ({...sources$, props: {url$: xs.of(proxied('http://kotaku.com/rss'))}})
+
+  const intent = sources$ => RssList(rssSources(sources$), (response) => feed(xmlResponseAdapter(response)))
   const model = intent$ => intent$
   const view = model$ => model$.DOM
     .map(vdom => (
       <div>
-        <label>Response</label>
         {vdom}
       </div>
     ))

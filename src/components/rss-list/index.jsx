@@ -1,12 +1,8 @@
-import { xml2js } from 'xml-js'
+import { Article } from './article'
 
-const XML2JS_CONFIG = {compact: true, ignoreAttributes: true, ignoreDeclaration: true, ignoreDoctype: true}
-
-export function RssList ({HTTP, props}) {
-  const proxyUrl = 'http://cors-proxy.htmldriven.com/?url='
-
+export function RssList ({HTTP, props}, feedAdapter = x => x) {
   const request$ = props.url$.map(url => ({
-    url: proxyUrl + url,
+    url: url,
     method: 'GET',
     category: 'rss'
   }))
@@ -14,13 +10,12 @@ export function RssList ({HTTP, props}) {
   const response$ = HTTP
     .select('rss')
     .flatten()
-    .map(response => JSON.parse(response.text))
-    .map(response => xml2js(response.body, XML2JS_CONFIG))
+    .map(feedAdapter)
 
   const vdom$ = response$
-    .map(response => (
-      <pre>{JSON.stringify(response, null, 2)}</pre>
-    ))
+    .map(feed =>
+      <div>{feed.map(Article)}</div>
+    )
 
   return {
     DOM: vdom$,
