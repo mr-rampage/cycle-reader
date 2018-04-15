@@ -5,37 +5,31 @@ import { proxied } from './domain/proxy-request'
 import { xmlResponseAdapter } from './domain/xml-json.adapter'
 import { feed } from './domain/feed'
 
-function old (sources) {
+export function main (sources) {
   const intent = sources$ => UrlInput(sources$)
   const model = intent$ => intent$
-  const view = model$ => xs.combine(model$.DOM, model$.value)
-    .map(([dom, url]) =>
+  const urlInput = model(intent(sources))
+
+  const rssSources = (sources$, url$) => ({
+    ...sources$,
+    props: {
+      url$: url$
+        .filter(url => url)
+        .map(proxied)
+    }
+  })
+  const rssList = RssList(rssSources(sources, urlInput.value), (response) => feed(xmlResponseAdapter(response)))
+
+  const view = model$ => xs.combine(model$.DOM, rssList.DOM)
+    .map(([urlInput, rssList]) =>
       <div>
-        {dom}
-        <p>{url}</p>
+        {urlInput}
+        {rssList}
       </div>
     )
 
   return {
-    DOM: view(model(intent(sources)))
-  }
-}
-
-export function main (sources) {
-  const rssSources = sources$ => ({...sources$, props: {url$: xs.of(proxied('http://kotaku.com/rss'))}})
-
-  const intent = sources$ => RssList(rssSources(sources$), (response) => feed(xmlResponseAdapter(response)))
-  const model = intent$ => intent$
-  const view = model$ => model$.DOM
-    .map(vdom => (
-      <div>
-        {vdom}
-      </div>
-    ))
-
-  const rssList$ = model(intent(sources))
-  return {
-    DOM: view(rssList$),
-    HTTP: rssList$.HTTP
+    DOM: view(urlInput),
+    HTTP: rssList.HTTP
   }
 }
