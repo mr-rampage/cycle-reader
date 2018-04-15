@@ -1,6 +1,6 @@
 import { UrlInput } from './components/url-input/index'
 import xs from 'xstream'
-import { RssList } from './components/rss-list'
+import { RssList } from './components/rss-list/index'
 import { proxied } from './domain/proxy-request'
 import { xmlResponseAdapter } from './domain/xml-json.adapter'
 import { feed } from './domain/feed'
