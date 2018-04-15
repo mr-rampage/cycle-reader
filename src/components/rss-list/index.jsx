@@ -14,7 +14,7 @@ export function RssList ({HTTP, props}, feedAdapter = x => x) {
 
   const vdom$ = response$
     .map(feed =>
-      <div>{feed.map(Article)}</div>
+      <div className="uk-child-width-1-2@m">{feed.map(Article)}</div>
     )
 
   return {
