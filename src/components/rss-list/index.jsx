@@ -1,4 +1,4 @@
-import { Article } from './article'
+import { Feed } from './feed'
 
 export function RssList ({HTTP, props}, feedAdapter = x => x) {
   const request$ = props.url$.map(url => ({
@@ -12,13 +12,10 @@ export function RssList ({HTTP, props}, feedAdapter = x => x) {
     .flatten()
     .map(feedAdapter)
 
-  const vdom$ = response$
-    .map(feed =>
-      <div className="uk-child-width-1-2@m">{feed.map(Article)}</div>
-    )
+  const vDom$ = response$.map(Feed)
 
   return {
-    DOM: vdom$,
+    DOM: vDom$,
     HTTP: request$
   }
 }
