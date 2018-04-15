@@ -3,22 +3,21 @@ import { Search } from './search'
 const isUrl = new RegExp('^(https?|ftp):\\/\\/[^\\s/$.?#].[^\\s]*$', 'i')
 
 export function UrlInput (sources) {
-  const onUrlInput = sources => sources.DOM
+  const intent = sources => sources.DOM
     .select('.uk-search-input')
     .events('input')
     .map(event => event.target.value)
 
-  const validUrls = intent$ => intent$
+  const model = intent$ => intent$
     .filter(input => isUrl.test(input))
     .startWith('')
 
-  const render = model$ => model$
-    .map(Search)
+  const view = model$ => model$.map(Search)
 
-  const url$ = validUrls(onUrlInput(sources))
+  const url$ = model(intent(sources))
 
   return {
-    DOM: render(url$),
+    DOM: view(url$),
     value: url$
   }
 }
