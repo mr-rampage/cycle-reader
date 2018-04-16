@@ -1,20 +1,20 @@
 import { Search } from './search'
-import xs from 'xstream'
+import sampleCombine from 'xstream/extra/sampleCombine'
 
-const isUrl = new RegExp('^(https?|ftp):\\/\\/[^\\s/$.?#].[^\\s]*$', 'i')
+const isUrl = new RegExp('^(https?):\\/\\/[^\\s/$.?#].[^\\s]*$', 'i')
 
 export function UrlInput ({DOM}) {
-  const onSubmit = dom$ => dom$.select('.uk-search').events('submit')
-  const onInput = dom$ => dom$.select('.uk-search-input').events('input')
+  const submit$ = dom$ => dom$.select('.uk-search').events('submit')
+  const search$ = dom$ => dom$.select('.uk-search-input').events('input')
 
-  const intent = sources => xs.combine(onSubmit(sources), onInput(sources))
+  const intent = sources => submit$(sources)
+    .compose(sampleCombine(search$(sources)))
     .map(([submitEvent, inputEvent]) => {
       submitEvent.preventDefault()
       return inputEvent.target.value
     })
 
   const model = intent$ => intent$
-    .debug()
     .filter(input => isUrl.test(input))
     .startWith('')
 
