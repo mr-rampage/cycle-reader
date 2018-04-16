@@ -12,7 +12,6 @@ export function RssList ({HTTP, props}, feedAdapter = x => x) {
     .select('rss')
     .flatten()
     .map(feedAdapter)
-    .debug()
 
   const vDom$ = response$
     .map(Feed)
