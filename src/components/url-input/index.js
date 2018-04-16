@@ -3,10 +3,9 @@ import xs from 'xstream'
 
 const isUrl = new RegExp('^(https?|ftp):\\/\\/[^\\s/$.?#].[^\\s]*$', 'i')
 
-export function UrlInput (sources) {
-
-  const onSubmit = sources => sources.DOM.select('.uk-search').events('submit')
-  const onInput = sources => sources.DOM.select('.uk-search-input').events('input')
+export function UrlInput ({DOM}) {
+  const onSubmit = dom$ => dom$.select('.uk-search').events('submit')
+  const onInput = dom$ => dom$.select('.uk-search-input').events('input')
 
   const intent = sources => xs.combine(onSubmit(sources), onInput(sources))
     .map(([submitEvent, inputEvent]) => {
@@ -21,7 +20,7 @@ export function UrlInput (sources) {
 
   const view = model$ => model$.map(Search)
 
-  const url$ = model(intent(sources))
+  const url$ = model(intent(DOM))
 
   return {
     DOM: view(url$),

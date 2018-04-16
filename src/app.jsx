@@ -6,21 +6,10 @@ import { xmlResponseAdapter } from './domain/xml-json.adapter'
 import { feed } from './domain/feed'
 
 export function main (sources) {
-  const intent = sources$ => UrlInput(sources$)
-  const model = intent$ => intent$
-  const urlInput = model(intent(sources))
+  const urlSource = url$(sources)
+  const rssSink = rss$(sources, urlSource.value)
 
-  const rssSources = (sources$, url$) => ({
-    ...sources$,
-    props: {
-      url$: url$
-        .filter(url => url)
-        .map(proxied)
-    }
-  })
-  const rssList = RssList(rssSources(sources, urlInput.value), (response) => feed(xmlResponseAdapter(response)))
-
-  const view = model$ => xs.combine(model$.DOM, rssList.DOM)
+  const vDom$ = xs.combine(urlSource.DOM, rssSink.DOM)
     .map(([urlInput, rssList]) =>
       <div>
         {urlInput}
@@ -29,7 +18,24 @@ export function main (sources) {
     )
 
   return {
-    DOM: view(urlInput),
-    HTTP: rssList.HTTP
+    DOM: vDom$,
+    HTTP: rssSink.HTTP
   }
+}
+
+function url$ (sources) {
+  return UrlInput(sources)
+}
+
+function rss$ (source$, url$) {
+  const rssSources = (sources$, url$) => ({
+    ...sources$,
+    props: {
+      url$: url$
+        .filter(url => url)
+        .map(proxied)
+    }
+  })
+
+  return RssList(rssSources(source$, url$), (response) => feed(xmlResponseAdapter(response)))
 }
