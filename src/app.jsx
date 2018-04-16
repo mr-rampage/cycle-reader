@@ -37,5 +37,8 @@ function rss$ (source$, url$) {
     }
   })
 
-  return RssList(rssSources(source$, url$), (response) => feed(xmlResponseAdapter(response)))
+  return RssList(
+    rssSources(source$, url$),
+    (response) => feed(xmlResponseAdapter(response))
+  )
 }
