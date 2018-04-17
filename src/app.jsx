@@ -4,12 +4,12 @@ import { RssList } from './components/rss-list'
 import * as RssSources from './components/rss-list/rss-source.factory'
 
 export function main (sources) {
-  const urlSource = UrlInput(sources.DOM)
+  const urlSink = UrlInput(sources.DOM)
 
-  const rssSources = RssSources.fromUrl$(sources.HTTP, urlSource.value, 'rss')
+  const rssSources = RssSources.fromUrl$({...sources, url$: urlSink.value}, 'rss')
   const rssSink = RssList(rssSources)
 
-  const vDom$ = xs.combine(urlSource.DOM, rssSink.DOM)
+  const vdom$ = xs.combine(urlSink.DOM, rssSink.DOM)
     .map(([urlInput, rssList]) =>
       <div>
         {urlInput}
@@ -18,7 +18,7 @@ export function main (sources) {
     )
 
   return {
-    DOM: vDom$,
+    DOM: vdom$,
     HTTP: rssSink.HTTP
   }
 }

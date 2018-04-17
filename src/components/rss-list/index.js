@@ -1,26 +1,24 @@
 import { Feed } from './feed'
 import { feed } from '../../domain/feed'
 import { xmlResponseAdapter } from '../../domain/xml-json.adapter'
+import sampleCombine from 'xstream/extra/sampleCombine'
 
 export function RssList ({props}) {
   const request$ = props.feed$
-    .map(({href, category}) => ({
-      url: href,
-      method: 'GET',
-      category: category
-    }))
+    .compose(sampleCombine(props.category$))
+    .map(([url, category]) => ({url, category}))
 
   const model$ = props.response$
     .map(response => feed(xmlResponseAdapter(response)))
 
-  const vDom$ = model$
+  const vdom$ = model$
     .fold((list, articles) => list.concat(articles).sort(byDate), [])
     .filter(feed => feed.length)
     .map(Feed)
     .startWith('')
 
   return {
-    DOM: vDom$,
+    DOM: vdom$,
     HTTP: request$,
     value: model$
   }
