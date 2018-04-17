@@ -2,9 +2,9 @@ import { Feed } from './feed'
 
 export function RssList ({props}) {
   const model$ = props.feed$
+    .fold((list, articles) => list.concat(articles).sort(byDate), [])
 
   const vdom$ = model$
-    .fold((list, articles) => list.concat(articles).sort(byDate), [])
     .filter(feed => feed.length)
     .map(Feed)
     .startWith('')
