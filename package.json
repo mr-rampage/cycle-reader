@@ -9,7 +9,8 @@
     "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "eslint-plugin-standard": "^3.0.1",
+    "less": "^3.0.1"
   },
   "dependencies": {
     "@cycle/dom": "^20.2.0",
@@ -20,10 +21,11 @@
     "xstream": "^11.2.0"
   },
   "scripts": {
-    "start": "cycle-scripts start",
+    "start": "npm run build:css & cycle-scripts start",
     "test": "cycle-scripts test",
-    "build": "cycle-scripts build",
-    "eject": "cycle-scripts eject"
+    "build": "npm run build:css & cycle-scripts build",
+    "eject": "cycle-scripts eject",
+    "build:css": "lessc src/styles.less public/css/styles.css"
   },
   "cca": {
     "language": "javascript",
