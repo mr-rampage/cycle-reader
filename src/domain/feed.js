@@ -6,7 +6,7 @@ export function feed (response) {
       link: item.link._text,
       thumbnail: extractThumbnail(item.description._cdata),
       description: stripHtmlTags(item.description._cdata),
-      date: item.pubDate._text
+      date: new Date(item.pubDate._text).toISOString()
     }
   ))
 }
