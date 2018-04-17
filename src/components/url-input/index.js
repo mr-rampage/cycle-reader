@@ -3,7 +3,7 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 
 const isUrl = new RegExp('^(https?):\\/\\/[^\\s/$.?#].[^\\s]*$', 'i')
 
-export function UrlInput ({DOM}) {
+export function UrlInput (dom$) {
   const submit$ = dom$ => dom$.select('.uk-search').events('submit')
   const search$ = dom$ => dom$.select('.uk-search-input').events('input')
 
@@ -20,7 +20,7 @@ export function UrlInput ({DOM}) {
 
   const view = model$ => model$.map(Search)
 
-  const url$ = model(intent(DOM))
+  const url$ = model(intent(dom$))
 
   return {
     DOM: view(url$),
