@@ -1,24 +1,23 @@
-import { UrlInput } from './components/url-input'
+import { RssSearch } from './components/rss-search'
 import xs from 'xstream'
 import { RssList } from './components/rss-list'
-import * as RssSources from './components/rss-list/rss-source.factory'
+import { Rss } from './components/rss'
 
 export function main (sources) {
-  const urlSink = UrlInput(sources.DOM)
+  const searchSource = RssSearch(sources.DOM)
+  const feedSource = Rss({HTTP: sources.HTTP, props: {url$: searchSource.value}}, 'rss')
+  const list = RssList({props: {feed$: feedSource.value}})
 
-  const rssSources = RssSources.fromUrl$({...sources, url$: urlSink.value}, 'rss')
-  const rssSink = RssList(rssSources)
-
-  const vdom$ = xs.combine(urlSink.DOM, rssSink.DOM)
-    .map(([urlInput, rssList]) =>
+  const vdom$ = xs.combine(searchSource.DOM, list.DOM)
+    .map(([rssSearch, rssList]) =>
       <div>
-        {urlInput}
+        {rssSearch}
         {rssList}
       </div>
     )
 
   return {
     DOM: vdom$,
-    HTTP: rssSink.HTTP
+    HTTP: feedSource.HTTP
   }
 }

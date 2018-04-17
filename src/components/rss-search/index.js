@@ -3,7 +3,7 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 
 const isUrl = new RegExp('^(https?):\\/\\/[^\\s/$.?#].[^\\s]*$', 'i')
 
-export function UrlInput (dom$) {
+export function RssSearch (dom$) {
   const submit$ = dom$.select('.uk-search').events('submit')
   const search$ = dom$.select('.uk-search-input').events('input')
 
