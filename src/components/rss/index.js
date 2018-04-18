@@ -1,6 +1,6 @@
 import { proxied } from './proxy-request'
-import { feed } from './feed'
-import { xmlResponseAdapter } from './xml-json.adapter'
+import { articles } from './articles'
+import { atomToJson } from './atom-json'
 
 export function Rss ({HTTP, props}, category) {
   const request$ = props.url$
@@ -9,7 +9,9 @@ export function Rss ({HTTP, props}, category) {
     .map(url => ({url, category}))
 
   const response$ = HTTP.select(category).flatten()
-    .map(response => feed(xmlResponseAdapter(response)))
+    .map(atomToJson)
+    .flatten()
+    .map(articles)
 
   return {
     HTTP: request$,

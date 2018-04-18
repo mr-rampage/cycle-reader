@@ -16,9 +16,11 @@
     "@cycle/dom": "^20.2.0",
     "@cycle/http": "^14.9.0",
     "@cycle/xstream-run": "^4.2.0",
+    "cycle-idb": "^0.1.1",
     "uikit": "^3.0.0-beta.42",
-    "xml-js": "^1.6.2",
-    "xstream": "^11.2.0"
+    "xml2js": "^0.4.19",
+    "xstream": "^11.2.0",
+    "xstream-from-callback": "^1.0.0"
   },
   "scripts": {
     "start": "npm run build:css & cycle-scripts start",
