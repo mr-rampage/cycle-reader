@@ -7,7 +7,7 @@ export function articles (feed) {
       ...item,
       thumbnail: extractThumbnail(item.description),
       description: enrich(item.description),
-      created: new Date(item.created).toISOString()
+      created: new Date(item.pubDate).toISOString()
     }
   ))
 }
