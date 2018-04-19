@@ -30,10 +30,6 @@ function normalize (json) {
     rss.image = channel.image[0].url
   }
 
-  if (!rss.image && channel["itunes:image"]) {
-    rss.image = channel['itunes:image'][0].href
-  }
-
   rss.image = rss.image && Array.isArray(rss.image) ? rss.image[0] : ''
 
   if (channel.item) {
@@ -46,30 +42,6 @@ function normalize (json) {
       obj.description = !isNullOrUndefined(val.description) ? val.description[0] : ''
       obj.url = obj.link = !isNullOrUndefined(val.link) ? val.link[0] : ''
 
-      if (val['itunes:subtitle']) {
-        obj.itunes_subtitle = val['itunes:subtitle'][0]
-      }
-      if (val['itunes:summary']) {
-        obj.itunes_summary = val['itunes:summary'][0]
-      }
-      if (val['itunes:author']) {
-        obj.itunes_author = val['itunes:author'][0]
-      }
-      if (val['itunes:explicit']) {
-        obj.itunes_explicit = val['itunes:explicit'][0]
-      }
-      if (val['itunes:duration']) {
-        obj.itunes_duration = val['itunes:duration'][0]
-      }
-      if (val['itunes:season']) {
-        obj.itunes_season = val['itunes:season'][0]
-      }
-      if (val['itunes:episode']) {
-        obj.itunes_episode = val['itunes:episode'][0]
-      }
-      if (val['itunes:episodeType']) {
-        obj.itunes_episodeType = val['itunes:episodeType'][0]
-      }
       if (val.pubDate) {
         //lets try basis js date parsing for now
         obj.created = Date.parse(val.pubDate[0])
