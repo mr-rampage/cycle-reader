@@ -5,14 +5,15 @@ export function articles (feed) {
     {
       source,
       ...item,
-      thumbnail: extractThumbnail(item.description),
+      thumbnail: extractThumbnail(item['content:encoded'], item.description),
       description: enrich(item.description),
       created: new Date(item.pubDate).toISOString()
     }
   ))
 }
 
-function extractThumbnail (htmlString) {
+function extractThumbnail (...sources) {
+  const htmlString = sources.filter(x => x)[0]
   const matches = htmlString.match(/<img .*?>/)
   return matches ? matches[0] : ''
 }
