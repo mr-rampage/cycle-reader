@@ -1,7 +1,6 @@
 import { Search } from './search'
 import sampleCombine from 'xstream/extra/sampleCombine'
-
-const isUrl = new RegExp('^(https?):\\/\\/[^\\s/$.?#].[^\\s]*$', 'i')
+import { Url$ } from '../../domain/urls'
 
 export function RssSearch (dom$) {
   const submit$ = dom$.select('.uk-search').events('submit')
@@ -14,11 +13,11 @@ export function RssSearch (dom$) {
       return inputEvent.target.value
     })
 
-  const url$ = action$
-    .filter(input => isUrl.test(input))
-    .startWith('')
+  const url$ = Url$(action$)
 
-  const vdom$ = url$.map(Search)
+  const vdom$ = url$
+    .startWith('')
+    .map(Search)
 
   return {
     DOM: vdom$,

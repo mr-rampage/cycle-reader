@@ -1,8 +1,8 @@
 import { Feed } from './feed'
+import { Articles$ } from '../../domain/articles'
 
 export function RssList ({props}) {
-  const model$ = props.feed$
-    .fold((list, articles) => list.concat(articles).sort(byDate), [])
+  const model$ = Articles$(props.feed$)
 
   const vdom$ = model$
     .filter(feed => feed.length)
@@ -12,15 +12,5 @@ export function RssList ({props}) {
   return {
     DOM: vdom$,
     value: model$
-  }
-}
-
-function byDate (a, b) {
-  if (a.date < b.date) {
-    return 1
-  } else if (a.date > b.date) {
-    return -1
-  } else {
-    return 0
   }
 }
