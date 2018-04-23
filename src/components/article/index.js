@@ -14,10 +14,8 @@ export function Article ({HTTP, props}) {
     .map(ArticleModal)
 
   const modalListener = response$
-    .filter(value => value)
-    .map(() => document.querySelector('[uk-modal]'))
-    .filter(modal => modal)
-    .addListener({next: modal => UIkit.modal(modal).show()})
+    .drop(1)
+    .addListener({next: () => UIkit.modal('[uk-modal]').show()})
 
   return {
     DOM: vdom$,
