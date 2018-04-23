@@ -3,24 +3,21 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 import { Url$ } from '../../domain/urls'
 
 export function RssSearch (dom$) {
-  const submit$ = dom$.select('.uk-search').events('submit')
+  const submit$ = dom$.select('.uk-search').events('submit', {preventDefault: true})
   const search$ = dom$.select('.uk-search-input').events('input')
 
-  const action$ = submit$
+  const intent$ = submit$
     .compose(sampleCombine(search$))
-    .map(([submitEvent, inputEvent]) => {
-      submitEvent.preventDefault()
-      return inputEvent.target.value
-    })
+    .map(([submitEvent, inputEvent]) => inputEvent.target.value)
 
-  const url$ = Url$(action$)
+  const model$ = Url$(intent$)
 
-  const vdom$ = url$
+  const vdom$ = model$
     .startWith('')
     .map(Search)
 
   return {
     DOM: vdom$,
-    value: url$
+    value: model$
   }
 }
