@@ -1,6 +1,6 @@
-export function Article ({source, title, created, description, thumbnail}) {
+export function Article ({source, title, created, description, thumbnail, link}) {
   return (
-    <div className="uk-card uk-card-default uk-grid-collapse uk-margin-large uk-padding-small" attrs={{'uk-grid': true}}>
+    <div className="uk-card uk-card-default uk-grid-collapse uk-margin-large uk-padding-small" attrs={{'uk-grid': true, 'href': link}}>
       <div className="uk-card-media-left uk-cover-container uk-width-1-3@s">
         <span innerHTML={thumbnail} attrs={{'uk-cover': true}}></span>
       </div>
