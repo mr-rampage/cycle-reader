@@ -10,7 +10,6 @@ export function atomToJson (response) {
 
 function normalize (json) {
   const channel = head(json.rss.channel)
-  console.log(json)
   return {
     ...extractFields(channel, 'title', 'description', 'link'),
     items: channel.item.map(item => extractFields(item, 'pubDate', 'title', 'description', 'content:encoded', 'link')),
