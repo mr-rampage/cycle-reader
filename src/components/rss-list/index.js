@@ -1,7 +1,11 @@
 import { Feed } from './feed'
 import { Articles$ } from '../../domain/articles'
 
-export function RssList ({props}) {
+export function RssList ({DOM, props}) {
+  const viewArticle$ = DOM.select('.uk-card').events('click')
+    .map(event => event.currentTarget)
+    .map(target => target.attributes.getNamedItem('href').value)
+
   const model$ = Articles$(props.feed$)
 
   const vdom$ = model$
@@ -11,6 +15,6 @@ export function RssList ({props}) {
 
   return {
     DOM: vdom$,
-    value: model$
+    value: viewArticle$
   }
 }
