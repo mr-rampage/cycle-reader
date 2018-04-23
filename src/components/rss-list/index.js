@@ -6,7 +6,9 @@ export function RssList ({DOM, props}) {
     .map(event => event.currentTarget)
     .map(target => target.attributes.getNamedItem('href').value)
 
-  const model$ = Articles$(props.feed$)
+  const intent$ = props.feed$
+
+  const model$ = Articles$(intent$)
 
   const vdom$ = model$
     .filter(feed => feed.length)

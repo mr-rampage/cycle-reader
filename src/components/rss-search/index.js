@@ -2,9 +2,9 @@ import { Search } from './search'
 import sampleCombine from 'xstream/extra/sampleCombine'
 import { Url$ } from '../../domain/urls'
 
-export function RssSearch (dom$) {
-  const submit$ = dom$.select('.uk-search').events('submit', {preventDefault: true})
-  const search$ = dom$.select('.uk-search-input').events('input')
+export function RssSearch ({DOM}) {
+  const submit$ = DOM.select('.uk-search').events('submit', {preventDefault: true})
+  const search$ = DOM.select('.uk-search-input').events('input')
 
   const intent$ = submit$
     .compose(sampleCombine(search$))
