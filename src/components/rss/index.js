@@ -1,5 +1,5 @@
-import { articles } from './articles'
-import { atomToJson } from './atom-json'
+import { articles } from '../../domain/articles-adapter'
+import { atomToJson } from '../../domain/atom-json'
 
 export function Rss ({HTTP, props}) {
   const request$ = props.url$

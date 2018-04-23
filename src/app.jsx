@@ -3,7 +3,7 @@ import xs from 'xstream'
 import { RssList } from './components/rss-list'
 import { Rss } from './components/rss'
 import { Article } from './components/article'
-import { proxied } from './components/rss/proxy-request'
+import { proxied } from './domain/proxy-request'
 
 export function main (sources) {
   const searchSource = RssSearch(sources.DOM)
