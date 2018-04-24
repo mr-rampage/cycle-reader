@@ -30,7 +30,8 @@
     "test": "cycle-scripts test",
     "build": "npm run build:css & cycle-scripts build",
     "eject": "cycle-scripts eject",
-    "build:css": "lessc src/styles.less public/css/styles.css"
+    "build:css": "lessc src/styles.less public/css/styles.css",
+    "lint": "eslint ./src --ext .js,.jsx"
   },
   "cca": {
     "language": "javascript",
@@ -40,5 +41,19 @@
     "presets": [
       "es2015"
     ]
+  },
+  "eslintConfig": {
+    "extends": "standard",
+    "plugins": [
+      "mocha"
+    ],
+    "globals": {
+      "describe": true,
+      "it": true
+    },
+    "env": {
+      "browser": true,
+      "mocha": true
+    }
   }
 }
