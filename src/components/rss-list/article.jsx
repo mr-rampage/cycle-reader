@@ -8,7 +8,7 @@ export function Article ({source, title, created, description, thumbnail, link})
         <div className="uk-card-badge uk-label">{source}</div>
         <h3 className="uk-card-title">{title}</h3>
         <p className="uk-text-meta">{created}</p>
-        <p innerHTML={description}></p>
+        <p>{description}</p>
       </div>
     </div>
   )
