@@ -4,7 +4,6 @@
   "private": true,
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
-    "cycle-scripts": "^2.1.0",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.10.0",
@@ -13,7 +12,22 @@
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
     "less": "^3.0.1",
-    "mocha": "^5.1.1"
+    "mocha": "^5.1.1",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
+    "chalk": "^2.1.0",
+    "cross-spawn": "^5.1.0",
+    "fs-extra": "^4.0.2",
+    "html-webpack-plugin": "^2.30.1",
+    "inquirer": "^3.3.0",
+    "jest": "^21.2.1",
+    "react-dev-utils": "^4.1.0",
+    "snabbdom-pragma": "^2.5.0",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.1"
   },
   "dependencies": {
     "@cycle/dom": "^20.2.0",
@@ -26,16 +40,9 @@
     "xstream-from-callback": "^1.0.0"
   },
   "scripts": {
-    "start": "npm run build:css & cycle-scripts start",
-    "test": "cycle-scripts test",
-    "build": "npm run build:css & cycle-scripts build",
-    "eject": "cycle-scripts eject",
-    "build:css": "lessc src/styles.less public/css/styles.css",
-    "lint": "eslint ./src --ext .js,.jsx"
-  },
-  "cca": {
-    "language": "javascript",
-    "streamLib": "xstream"
+    "start": "node scripts/start.js",
+    "test": "node scripts/test.js",
+    "build": "node scripts/build.js"
   },
   "babel": {
     "presets": [
