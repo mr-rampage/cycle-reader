@@ -4,7 +4,7 @@ import xsFromCallback from 'xstream-from-callback'
 const xmlParser = new xml2js.Parser({trim: false, normalize: true, mergeAttrs: true})
 
 export function atomToJson (response) {
-  return xsFromCallback(xmlParser.parseString)(response.body.body)
+  return xsFromCallback(xmlParser.parseString)(response.body)
     .map(normalize)
 }
 

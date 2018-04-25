@@ -1,12 +1,11 @@
 import { ArticleModal } from './article'
 import * as UIkit from 'uikit'
 
-export function Article ({HTTP, props}) {
+export function Article ({FETCH, props}) {
   const request$ = props.article$
     .map(url => ({url, category: props.category}))
 
-  const response$ = HTTP.select(props.category).flatten()
-    .map(response => response.body)
+  const response$ = FETCH.select(props.category).flatten()
     .filter(body => body.success)
     .startWith('')
 
@@ -19,7 +18,7 @@ export function Article ({HTTP, props}) {
 
   return {
     DOM: vdom$,
-    HTTP: request$,
+    FETCH: request$,
     modal: modalListener
   }
 }

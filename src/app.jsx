@@ -7,11 +7,11 @@ import { proxied } from './domain/proxy-request'
 
 export function main (sources) {
   const searchSource = RssSearch({DOM: sources.DOM})
-  const feedSource = Rss({HTTP: sources.HTTP, props: {url$: searchSource.value, category: 'rss'}})
+  const feedSource = Rss({FETCH: sources.FETCH, props: {url$: searchSource.value, category: 'rss'}})
   const list = RssList({DOM: sources.DOM, props: {feed$: feedSource.value}})
-  const articleModal = Article({HTTP: sources.HTTP, props: {article$: list.value, category: 'article'}})
+  const articleModal = Article({FETCH: sources.FETCH, props: {article$: list.value, category: 'article'}})
 
-  const http$ = xs.merge(feedSource.HTTP, articleModal.HTTP)
+  const fetch$ = xs.merge(feedSource.FETCH, articleModal.FETCH)
     .map(request => ({...request, url: proxied(request.url)}))
 
   const vdom$ = xs.combine(searchSource.DOM, list.DOM, articleModal.DOM)
@@ -25,6 +25,6 @@ export function main (sources) {
 
   return {
     DOM: vdom$,
-    HTTP: http$
+    FETCH: fetch$
   }
 }
