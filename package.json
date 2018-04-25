@@ -35,7 +35,6 @@
   },
   "dependencies": {
     "@cycle/dom": "^20.2.0",
-    "@cycle/http": "^14.9.0",
     "@cycle/xstream-run": "^4.2.0",
     "cycle-idb": "^0.1.1",
     "uikit": "^3.0.0-beta.42",
