@@ -6,7 +6,6 @@ import dropRepeats from 'xstream/extra/dropRepeats'
 export function makeFetchDriver () {
   return function fetchDriver (request$) {
     const response$$ = request$
-      .debug()
       .compose(dropRepeats(sameRequest))
       .map(requestsInputToResponse$)
 
