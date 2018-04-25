@@ -10,12 +10,6 @@ export function makeFetchDriver () {
       .compose(dropRepeats(sameRequest))
       .map(requestsInputToResponse$)
 
-    response$$.addListener({
-      next: () => {},
-      error: () => {},
-      complete: () => {}
-    })
-
     return {
       select: select.bind(null, response$$)
     }
@@ -24,11 +18,6 @@ export function makeFetchDriver () {
 
 function requestsInputToResponse$ (request) {
   const response$ = adapt(createResponse$(request).remember())
-  response$.addListener({
-    next: () => {},
-    error: () => {},
-    complete: () => {}
-  })
   Object.defineProperty(response$, 'request', {
     value: request,
     writable: false
@@ -49,8 +38,8 @@ function createResponse$ ({url, options}) {
 }
 
 function select (response$$, category) {
-  return adapt(response$$
-    .filter(response$ => response$.request && response$.request.category === category))
+  const byCategory$$ = response$$.filter(response$ => response$.request && response$.request.category === category)
+  return adapt(byCategory$$)
 }
 
 function sameRequest (previous, current) {
