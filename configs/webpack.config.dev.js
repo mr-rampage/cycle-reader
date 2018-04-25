@@ -12,6 +12,7 @@ const webpack = require('webpack')
 const paths = {
   appSrc: path.join(process.cwd(), 'src'),
   appIndex: path.join(process.cwd(), 'src', 'index.js'),
+  appStyle: path.join(process.cwd(), 'src', 'styles.less'),
   appBuild: path.join(process.cwd(), 'build'),
   public: '/'
 }
@@ -31,7 +32,8 @@ module.exports = {
       // require.resolve('webpack/hot/dev-server'),
       require.resolve('react-dev-utils/webpackHotDevClient'),
       // Your app's code
-      paths.appIndex
+      paths.appIndex,
+      paths.appStyle
     ]
   },
   resolve: {
@@ -66,7 +68,7 @@ module.exports = {
           // package as create-react-app does with their 'babel-preset-react-app module
           babelrc: false,
           presets: [
-            [ 'env', {
+            ['env', {
               'targets': {
                 'browsers': ['last 2 versions']
               }
@@ -75,11 +77,19 @@ module.exports = {
           plugins: [
             // https://cycle.js.org/getting-started.html#getting-started-coding-consider-jsx
             // This allow us to use JSX to create virtual dom elements instead of Snabbdom helpers like div(), input(), ..
-            ['transform-react-jsx', { pragma: 'Snabbdom.createElement' }],
+            ['transform-react-jsx', {pragma: 'Snabbdom.createElement'}],
             // Allow Babel to transform rest properties for object destructuring assignment and spread properties for object literals.
             ['transform-object-rest-spread']
           ]
         }
+      },
+      {
+        test: /\.less$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'less-loader'
+        ]
       }
     ]
   },
