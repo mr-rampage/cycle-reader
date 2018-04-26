@@ -8,6 +8,10 @@ import Icons from 'uikit/dist/js/uikit-icons'
 // loads the Icon plugin
 UIkit.use(Icons)
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./cache.worker.js'))
+}
+
 run(main, {
   DOM: makeDOMDriver('#root'),
   FETCH: makeFetchDriver()

@@ -12,7 +12,7 @@ export function main (sources) {
   const articleModal = Article({FETCH: sources.FETCH, props: {article$: list.value, category: 'article'}})
 
   const fetch$ = xs.merge(feedSource.FETCH, articleModal.FETCH)
-    .map(request => ({...request, url: proxied(request.url)}))
+    .map(request => ({...request, url: proxied(request.url), options: {mode: 'cors'}}))
 
   const vdom$ = xs.combine(searchSource.DOM, list.DOM, articleModal.DOM)
     .map(([rssSearch, rssList, article]) =>

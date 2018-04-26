@@ -7,6 +7,7 @@ process.noDeprecation = true
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 // Paths to be used for webpack configuration
 const paths = {
@@ -85,11 +86,10 @@ module.exports = {
       },
       {
         test: /\.less$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'less-loader'
-        ]
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'less-loader']
+        })
       }
     ]
   },
@@ -110,7 +110,8 @@ module.exports = {
     // To be used for JSX support
     new webpack.ProvidePlugin({
       Snabbdom: 'snabbdom-pragma'
-    })
+    }),
+    new ExtractTextPlugin('styles.css')
   ],
   devtool: 'inline-source-map'
 }
