@@ -1,7 +1,7 @@
 import { ArticleModal } from './article'
 import * as UIkit from 'uikit'
 
-export function Article ({FETCH, props}) {
+export function ArticleViewer ({FETCH, props}) {
   const request$ = props.article$
     .map(url => ({url, category: props.category}))
 

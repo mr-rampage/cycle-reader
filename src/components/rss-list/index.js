@@ -12,6 +12,6 @@ export function RssList ({DOM, props}) {
 
   return {
     DOM: vdom$,
-    value: viewArticle$
+    selected: viewArticle$
   }
 }

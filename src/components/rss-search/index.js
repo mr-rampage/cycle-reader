@@ -18,6 +18,6 @@ export function RssSearch ({DOM}) {
 
   return {
     DOM: vdom$,
-    value: model$
+    query: model$
   }
 }

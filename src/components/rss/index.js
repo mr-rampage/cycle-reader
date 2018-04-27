@@ -14,6 +14,6 @@ export function Rss ({FETCH, props}) {
 
   return {
     FETCH: request$,
-    value: response$
+    articles: response$
   }
 }

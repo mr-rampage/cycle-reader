@@ -20,7 +20,7 @@ run(main, {
   FETCH: makeFetchDriver(),
   IDB: makeIdbDriver(FEED_IDB, 1, upgradeDb => {
     switch (upgradeDb.oldVersion) {
-      case 0: upgradeDb.createObjectStore(FEED_IDB, { keyPath: 'link' })
+      case 0: upgradeDb.createObjectStore(FEED_IDB, {keyPath: 'link', autoIncrement: true})
     }
   })
 })
