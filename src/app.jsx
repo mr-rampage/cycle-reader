@@ -44,7 +44,6 @@ function storeArticles (newArticles$) {
     .map(articles => xs.fromArray(articles))
     .flatten()
     .map(article => $put(FEED_IDB, article))
-    .debug()
 }
 
 /* we need to subscribe to the store since it is lazy */
