@@ -1,16 +1,11 @@
 import { Feed } from './feed'
-import { Articles$ } from '../../domain/articles'
 
 export function RssList ({DOM, props}) {
   const viewArticle$ = DOM.select('.uk-card').events('click')
     .map(event => event.currentTarget)
     .map(target => target.attributes.getNamedItem('href').value)
 
-  const intent$ = props.feed$
-
-  const model$ = Articles$(intent$)
-
-  const vdom$ = model$
+  const vdom$ = props.feed$
     .filter(feed => feed.length)
     .map(Feed)
     .startWith('')
