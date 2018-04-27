@@ -4,12 +4,17 @@ import { RssList } from './components/rss-list'
 import { Rss } from './components/rss'
 import { Article } from './components/article'
 import { proxied } from './domain/proxy-request'
+import { FEED_IDB } from './index'
+import { $put } from 'cycle-idb'
+import { Articles$ } from './domain/articles'
 
 export function main (sources) {
-  const searchSource = RssSearch({DOM: sources.DOM})
-  const feedSource = Rss({FETCH: sources.FETCH, props: {url$: searchSource.value, category: 'rss'}})
-  const list = RssList({DOM: sources.DOM, props: {feed$: feedSource.value}})
-  const articleModal = Article({FETCH: sources.FETCH, props: {article$: list.value, category: 'article'}})
+  const searchSource = RssSearch(sources)
+  const feedSource = Rss({...sources, props: {url$: searchSource.value, category: 'rss'}})
+
+  const article$ = Articles$(sources.IDB.store(FEED_IDB).getAll().take(1), feedSource.value)
+  const list = RssList({...sources, props: {feed$: article$}})
+  const articleModal = Article({...sources, props: {article$: list.value, category: 'article'}})
 
   const fetch$ = xs.merge(feedSource.FETCH, articleModal.FETCH)
     .map(request => ({...request, url: proxied(request.url), options: {mode: 'cors'}}))
@@ -23,8 +28,15 @@ export function main (sources) {
       </div>
     )
 
+  const indexedDB$ = article$
+    .drop(1)
+    .map(articles => xs.fromArray(articles))
+    .flatten()
+    .map(article => $put(FEED_IDB, article))
+
   return {
     DOM: vdom$,
-    FETCH: fetch$
+    FETCH: fetch$,
+    IDB: indexedDB$
   }
 }
