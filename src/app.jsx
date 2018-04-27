@@ -12,31 +12,39 @@ export function main (sources) {
   const searchSource = RssSearch(sources)
   const feedSource = Rss({...sources, props: {url$: searchSource.value, category: 'rss'}})
 
-  const article$ = Articles$(sources.IDB.store(FEED_IDB).getAll().take(1), feedSource.value)
+  const article$ = Articles$({...sources, props: {feed$: feedSource.value}}, FEED_IDB)
   const list = RssList({...sources, props: {feed$: article$}})
   const articleModal = Article({...sources, props: {article$: list.value, category: 'article'}})
 
-  const fetch$ = xs.merge(feedSource.FETCH, articleModal.FETCH)
-    .map(request => ({...request, url: proxied(request.url), options: {mode: 'cors'}}))
+  const fetchRequests$ = proxyFetchRequests(feedSource.FETCH, articleModal.FETCH)
+  const storeRequests$ = storeArticles(article$)
+  const domUpdates$ = render(searchSource.DOM, list.DOM, articleModal.DOM)
 
-  const vdom$ = xs.combine(searchSource.DOM, list.DOM, articleModal.DOM)
-    .map(([rssSearch, rssList, article]) =>
+  return {
+    DOM: domUpdates$,
+    FETCH: fetchRequests$,
+    IDB: storeRequests$
+  }
+}
+
+function proxyFetchRequests (...fetches) {
+  return xs.merge.apply(null, fetches)
+    .map(request => ({...request, url: proxied(request.url), options: {mode: 'cors'}}))
+}
+
+function render (...vtrees) {
+  return xs.combine.apply(null, vtrees)
+    .map(vdoms =>
       <div>
-        {rssSearch}
-        {rssList}
-        {article}
+        {vdoms}
       </div>
     )
+}
 
-  const indexedDB$ = article$
+function storeArticles (article$) {
+  return article$
     .drop(1)
     .map(articles => xs.fromArray(articles))
     .flatten()
     .map(article => $put(FEED_IDB, article))
-
-  return {
-    DOM: vdom$,
-    FETCH: fetch$,
-    IDB: indexedDB$
-  }
 }
