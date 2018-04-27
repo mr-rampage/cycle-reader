@@ -26,9 +26,10 @@ self.addEventListener('fetch', event => {
         return fetch(event.request)
           .then(response => {
             if (event.request.destination === 'image') {
+              const cloned = response.clone()
               caches
                 .open(CURRENT_CACHES.images)
-                .then(cache => cache.put(event.request, response.clone()))
+                .then(cache => cache.put(event.request, cloned))
             }
             return response
           })
