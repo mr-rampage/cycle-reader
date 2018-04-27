@@ -8,6 +8,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+var AsyncAwaitPlugin = require('webpack-async-await')
 
 // Paths to be used for webpack configuration
 const paths = {
@@ -100,7 +101,8 @@ module.exports = {
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: this.devtool && this.devtool.indexOf('source-map') >= 0
     }),
-    new ExtractTextPlugin('styles.css')
+    new ExtractTextPlugin('styles.css'),
+    new AsyncAwaitPlugin({})
   ],
   devtool: 'cheap-module-source-map'
 }
