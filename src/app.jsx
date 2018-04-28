@@ -1,5 +1,6 @@
 import { RssSearch } from './components/rss-search'
 import xs from 'xstream'
+import sampleCombine from 'xstream/extra/sampleCombine'
 import { RssList } from './components/rss-list'
 import { Rss } from './components/rss'
 import { ArticleViewer } from './components/article-viewer'
@@ -17,7 +18,7 @@ export function main (sources) {
   return {
     DOM: render(search.DOM, feedList.DOM, articleViewer.DOM),
     FETCH: proxyFetchRequests(fetchFeed.FETCH, articleViewer.FETCH),
-    IDB: storeArticles(fetchFeed.articles)
+    IDB: storeArticles(sources.IDB.store(FEED_IDB), fetchFeed.articles)
   }
 }
 
@@ -35,9 +36,11 @@ function render (...vtrees) {
     )
 }
 
-function storeArticles (newArticles$) {
+function storeArticles (store$, newArticles$) {
   return newArticles$
-    .map(articles => xs.fromArray(articles))
+    .compose(sampleCombine(store$.getAllKeys()))
+    .map(([articles, existing]) => articles.filter(article => existing.indexOf(article.link) < 0))
+    .map(xs.fromArray)
     .flatten()
     .map(article => $put(FEED_IDB, article))
 }
