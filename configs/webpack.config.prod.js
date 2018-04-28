@@ -8,7 +8,6 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-var AsyncAwaitPlugin = require('webpack-async-await')
 
 // Paths to be used for webpack configuration
 const paths = {
@@ -59,8 +58,7 @@ module.exports = {
           presets: [
             ['env', {
               'targets': {
-                'browsers': ['last 2 versions'],
-                uglify: true
+                'browsers': ['last 2 versions']
               }
             }]
           ],
@@ -107,9 +105,8 @@ module.exports = {
       Snabbdom: 'snabbdom-pragma'
     }),
     // Uglify plugin, depending on the devtool options, Source Maps are generated.
-    new webpack.optimize.UglifyJsPlugin(),
-    new ExtractTextPlugin('styles.css'),
-    new AsyncAwaitPlugin({})
+    // new webpack.optimize.UglifyJsPlugin(),
+    new ExtractTextPlugin('styles.css')
   ],
   devtool: 'cheap-module-source-map'
 }

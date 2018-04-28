@@ -94,6 +94,14 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.js',
+      sourceMap: false,
+      minChunks: function (module) {
+        return module.context && module.context.includes('node_modules')
+      }
+    }),
     // This is necessary to emit hot updates (currently CSS only):
     new webpack.HotModuleReplacementPlugin(),
     // Generates an `index.html` file with the <script> injected.

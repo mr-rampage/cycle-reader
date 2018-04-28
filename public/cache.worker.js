@@ -7,7 +7,8 @@ const CURRENT_CACHES = {
 
 const urlsToCache = [
   '/cache.worker.js',
-  '/styles.css'
+  '/styles.css',
+  '/vendor.js'
 ]
 
 self.addEventListener('install', event => {
