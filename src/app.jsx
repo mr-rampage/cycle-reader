@@ -6,16 +6,12 @@ import { ArticleViewer } from './components/article-viewer'
 import { proxied } from './domain/proxy-request'
 import { FEED_IDB } from './index'
 import { $put } from 'cycle-idb'
-import { Articles$ } from './domain/articles'
 
 export function main (sources) {
   countArticles(sources, FEED_IDB)
   const search = RssSearch(sources)
   const fetchFeed = Rss({...sources, props: {url$: search.query, category: 'rss'}})
-
-  const article$ = Articles$({...sources, props: {feed$: fetchFeed.articles}}, FEED_IDB)
-  const feedList = RssList({...sources, props: {feed$: article$}})
-
+  const feedList = RssList({...sources, props: {feed$: sources.IDB.store(FEED_IDB).getAll()}})
   const articleViewer = ArticleViewer({...sources, props: {article$: feedList.selected, category: 'article'}})
 
   return {
