@@ -1,5 +1,4 @@
-import { articles } from '../../domain/articles-adapter'
-import { atomToJson } from '../../domain/atom-json'
+import { unmarshal } from '../../domain/rss-to-json'
 
 export function Rss ({FETCH, props}) {
   const request$ = props.url$
@@ -8,9 +7,8 @@ export function Rss ({FETCH, props}) {
 
   const response$ = FETCH.select(props.category)
     .flatten()
-    .map(atomToJson)
+    .map(unmarshal)
     .flatten()
-    .map(articles)
 
   return {
     FETCH: request$,

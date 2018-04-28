@@ -1,13 +1,20 @@
-export function articles (feed) {
+import Parser from 'rss-parser'
+import xs from 'xstream'
+
+export function unmarshal (response) {
+  return xs.fromPromise(new Parser().parseString(response.body))
+    .map(extractArticles)
+}
+
+export function extractArticles (feed) {
   const source = feed.title
 
   return feed.items.map(item => (
     {
       source,
       ...item,
-      thumbnail: extractThumbnail(item['content:encoded'], item.description),
-      description: enrich(item.description),
-      created: new Date(item.pubDate).toISOString(),
+      thumbnail: extractThumbnail(item['content:encoded'], item.content),
+      description: enrich(item.content),
       index: new Date(item.pubDate).getTime()
     }
   ))
