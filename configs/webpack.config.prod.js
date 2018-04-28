@@ -30,6 +30,7 @@ module.exports = {
   output: {
     // This is the productin JS bundle containing code from all our entry points.
     filename: 'bundle.js',
+    sourceMapFilename: 'bundle.js.map',
     // The output path where webpack will write the bundle
     path: paths.appBuild
   },
@@ -82,6 +83,14 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.js',
+      sourceMap: false,
+      minChunks: function (module) {
+        return module.context && module.context.includes('node_modules')
+      }
+    }),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       template: 'public/index.html',
@@ -98,9 +107,7 @@ module.exports = {
       Snabbdom: 'snabbdom-pragma'
     }),
     // Uglify plugin, depending on the devtool options, Source Maps are generated.
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: this.devtool && this.devtool.indexOf('source-map') >= 0
-    }),
+    new webpack.optimize.UglifyJsPlugin(),
     new ExtractTextPlugin('styles.css'),
     new AsyncAwaitPlugin({})
   ],
