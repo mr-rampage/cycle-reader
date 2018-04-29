@@ -5,8 +5,11 @@ import makeIdbDriver from 'cycle-idb'
 import { main } from './app'
 import UIkit from 'uikit'
 import Icons from 'uikit/dist/js/uikit-icons'
+import { makeWebWorkerDriver } from 'cycle-webworker'
 
-export const FEED_IDB = 'feed-db'
+const DATABASE = 'cycle-reader'
+export const ARTICLE_DB = 'article-db'
+export const FEED_DB = 'feed-db'
 
 // loads the Icon plugin
 UIkit.use(Icons)
@@ -18,9 +21,13 @@ if ('serviceWorker' in navigator) {
 run(main, {
   DOM: makeDOMDriver('#root'),
   FETCH: makeFetchDriver(),
-  IDB: makeIdbDriver(FEED_IDB, 1, upgradeDb => {
+  IDB: makeIdbDriver(DATABASE, 1, upgradeDb => {
     switch (upgradeDb.oldVersion) {
-      case 0: upgradeDb.createObjectStore(FEED_IDB, {keyPath: 'link', autoIncrement: true})
+      case 0: {
+        upgradeDb.createObjectStore(ARTICLE_DB, {keyPath: 'link', autoIncrement: true})
+        upgradeDb.createObjectStore(FEED_DB, {keyPath: 'href', autoIncrement: true})
+      }
     }
-  })
+  }),
+  WORKER: makeWebWorkerDriver(new Worker('./article.worker.js'))
 })

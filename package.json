@@ -37,6 +37,7 @@
     "@cycle/dom": "^20.2.0",
     "@cycle/xstream-run": "^4.2.0",
     "cycle-idb": "^0.1.1",
+    "cycle-webworker": "^2.1.0",
     "rss-parser": "^3.1.2",
     "uikit": "^3.0.0-beta.42",
     "whatwg-fetch": "^2.0.4",
