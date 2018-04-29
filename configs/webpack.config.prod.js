@@ -8,6 +8,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
 
 // Paths to be used for webpack configuration
 const paths = {
@@ -56,11 +57,11 @@ module.exports = {
           // As uglify doesn't support es6 code yet, the uglify param will tell babel plugin to transpile to es5
           // in order for the output to be uglified.
           presets: [
-            ['env', {
-              'targets': {
-                'browsers': ['last 2 versions']
+            [
+              'env', {
+                'targets': { 'browsers': ['last 2 versions'] }
               }
-            }]
+            ]
           ],
           plugins: [
             // https://cycle.js.org/getting-started.html#getting-started-coding-consider-jsx
@@ -106,6 +107,7 @@ module.exports = {
     }),
     // Uglify plugin, depending on the devtool options, Source Maps are generated.
     // new webpack.optimize.UglifyJsPlugin(),
+    new MinifyPlugin(),
     new ExtractTextPlugin('styles.css')
   ],
   devtool: 'cheap-module-source-map'
