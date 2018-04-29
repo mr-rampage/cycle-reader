@@ -3,7 +3,12 @@ let timeout
 onmessage = e => {
   if (timeout) {
     clearTimeout(timeout)
+  } else {
+    postMessage(e.data)
   }
-  postMessage(e.data)
-  timeout = setTimeout(onmessage.bind(null, e), 900000)
+
+  timeout = setTimeout(function () {
+    postMessage(e.data)
+    onmessage(e)
+  }, 900000)
 }

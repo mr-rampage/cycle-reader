@@ -9,21 +9,26 @@ import { ARTICLE_DB, FEED_DB } from './index'
 import { $put } from 'cycle-idb'
 
 export function main (sources) {
-  countArticles(sources, ARTICLE_DB)
+  // todo: this should be a container
   const search = RssSearch(sources)
-  const periodicSearch = sources.WORKER.map(xs.fromArray).flatten()
-  const feedUrl = xs.merge(periodicSearch, search.query)
+  const fetchFeed = Rss({...sources, props: {url$: search.query, category: 'rss'}})
 
-  const fetchFeed = Rss({...sources, props: {url$: feedUrl, category: 'rss'}})
+  // todo: this should be a container
+  const periodicSearch = sources.WORKER
+    .map(xs.fromArray).flatten()
+    .map(url => ({url, category: 'rss'}))
+
+  // todo: this should be a repository
+  const articleStore$ = storeArticles(sources.IDB.store(ARTICLE_DB), fetchFeed.articles)
+  const feedSubscriber = subscribeFeed(sources)
+
+  // todo: this should be a container
   const feedList = RssList({...sources, props: {feed$: sources.IDB.store(ARTICLE_DB).getAll()}})
   const articleViewer = ArticleViewer({...sources, props: {article$: feedList.selected, category: 'article'}})
 
-  const feedSubscriber = subscribeFeed(sources)
-  const articleStore$ = storeArticles(sources.IDB.store(ARTICLE_DB), fetchFeed.articles)
-
   return {
     DOM: render(search.DOM, feedList.DOM, articleViewer.DOM),
-    FETCH: proxyFetchRequests(fetchFeed.FETCH, articleViewer.FETCH),
+    FETCH: proxyFetchRequests(fetchFeed.FETCH, articleViewer.FETCH, periodicSearch),
     IDB: xs.merge(feedSubscriber.IDB, articleStore$),
     WORKER: sources.IDB.store(FEED_DB).getAllKeys()
   }
@@ -59,11 +64,4 @@ function storeArticles (store$, newArticles$) {
     .map(xs.fromArray)
     .flatten()
     .map(article => $put(ARTICLE_DB, article))
-}
-
-/* we need to subscribe to the store since it is lazy */
-function countArticles (sources, storeName) {
-  return sources.IDB.store(storeName).count().addListener({
-    next: count => console.info('Article count:', count)
-  })
 }
