@@ -1,6 +1,5 @@
 import { run } from '@cycle/xstream-run'
 import { makeDOMDriver } from '@cycle/dom'
-import { makeFetchDriver } from './drivers/cycle-fetch-driver'
 import makeIdbDriver from 'cycle-idb'
 import { main } from './app'
 import UIkit from 'uikit'
@@ -20,7 +19,6 @@ if ('serviceWorker' in navigator) {
 
 run(main, {
   DOM: makeDOMDriver('#root'),
-  FETCH: makeFetchDriver(),
   IDB: makeIdbDriver(DATABASE, 1, upgradeDb => {
     switch (upgradeDb.oldVersion) {
       case 0: {

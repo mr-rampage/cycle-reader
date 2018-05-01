@@ -1,6 +1,5 @@
-onmessage = e => {
-  console.log('message received', e.data)
+onmessage = e =>
   fetch(e.data.url, e.data.options)
     .then(response => response.json())
+    .then(response => ({...response, request: e.data}))
     .then(postMessage)
-}
