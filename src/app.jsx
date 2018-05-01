@@ -1,12 +1,13 @@
 import { RssSearch } from './components/rss-search'
 import xs from 'xstream'
 import { RssList } from './components/rss-list'
-import { Rss } from './providers/rss'
+import { Rss } from './providers/rss-provider'
 import { ArticleViewer } from './components/article-viewer'
 import { proxied } from './domain/proxy-request'
 import { ARTICLE_DB, FEED_DB } from './index'
 import { saveArticles } from './providers/article-repository'
 import { subscribeFeed } from './providers/feed-repository'
+import { periodicRefresh } from './providers/periodic-refresh'
 
 export function main (sources) {
   const search = RssSearch(sources)
@@ -15,17 +16,18 @@ export function main (sources) {
   const feedList = RssList({...sources, props: {feed$: sources.IDB.store(ARTICLE_DB).getAll()}})
   const article = ArticleViewer({...sources, props: {article$: feedList.selected, category: 'article'}})
 
-  const articlesCache = saveArticles({...sources, props: { articles: feed.articles, db: ARTICLE_DB }})
-  const feedCache = subscribeFeed({...sources, props: { category: 'rss', db: FEED_DB }})
+  const articlesCache = saveArticles({...sources, props: {articles: feed.articles, db: ARTICLE_DB}})
+  const feedCache = subscribeFeed({...sources, props: {category: 'rss', db: FEED_DB}})
+  const feedRefresh = periodicRefresh({...sources, props: {category: 'rss', db: FEED_DB}})
 
   return {
     DOM: render(search.DOM, feedList.DOM, article.DOM),
-    WORKER: proxyFetchRequests(feed.FETCH, article.FETCH),
+    WORKER: proxy(feed.FETCH, article.FETCH, feedRefresh.FETCH),
     IDB: xs.merge(articlesCache.IDB, feedCache.IDB)
   }
 }
 
-function proxyFetchRequests (...fetches) {
+function proxy (...fetches) {
   return xs.merge.apply(null, fetches)
     .map(request => ({...request, url: proxied(request.url), href: request.url, options: {mode: 'cors'}}))
 }

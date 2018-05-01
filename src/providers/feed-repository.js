@@ -1,5 +1,5 @@
 import { $put } from 'cycle-idb'
-import { byCategory } from '../../domain/response-filter'
+import { byCategory } from '../domain/response-filter'
 
 export function subscribeFeed ({WORKER, props}) {
   const successfulFetch$ = WORKER

@@ -1,7 +1,7 @@
-import { unmarshal } from '../../domain/rss-to-json'
-import { byCategory } from '../../domain/response-filter'
+import { unmarshal } from '../domain/rss-to-json'
+import { byCategory } from '../domain/response-filter'
 
-export function Rss ({FETCH, WORKER, props}) {
+export function Rss ({WORKER, props}) {
   const request$ = props.url$
     .filter(url => url)
     .map(url => ({url, category: props.category}))
