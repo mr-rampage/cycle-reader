@@ -6,7 +6,7 @@ export function unmarshal (response) {
     .map(extractArticles)
 }
 
-export function extractArticles (feed) {
+function extractArticles (feed) {
   const source = feed.title
 
   return feed.items.map(item => (
