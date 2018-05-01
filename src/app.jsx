@@ -14,9 +14,11 @@ export function main (sources) {
   const fetchFeed = Rss({...sources, props: {url$: search.query, category: 'rss'}})
 
   // todo: this should be a container
+  /*
   const periodicSearch = sources.WORKER
     .map(xs.fromArray).flatten()
     .map(url => ({url, category: 'rss'}))
+    */
 
   // todo: this should be a repository
   const articleStore$ = storeArticles(sources.IDB.store(ARTICLE_DB), fetchFeed.articles)
@@ -28,9 +30,9 @@ export function main (sources) {
 
   return {
     DOM: render(search.DOM, feedList.DOM, articleViewer.DOM),
-    FETCH: proxyFetchRequests(fetchFeed.FETCH, articleViewer.FETCH, periodicSearch),
     IDB: xs.merge(feedSubscriber.IDB, articleStore$),
-    WORKER: sources.IDB.store(FEED_DB).getAllKeys()
+    WORKER: proxyFetchRequests(fetchFeed.FETCH, articleViewer.FETCH)
+    // sources.IDB.store(FEED_DB).getAllKeys()
   }
 }
 
