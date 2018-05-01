@@ -1,9 +1,7 @@
 import { $put } from 'cycle-idb'
-import { byCategory } from '../domain/response-filter'
 
-export function subscribeFeed ({WORKER, props}) {
-  const successfulFetch$ = WORKER
-    .filter(byCategory.bind(null, props.category))
+export function subscribeFeed ({FETCH, props}) {
+  const successfulFetch$ = props.feed
     .map(response => response.request.href)
 
   return {

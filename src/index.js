@@ -27,5 +27,5 @@ run(main, {
       }
     }
   }),
-  WORKER: makeWebWorkerDriver(new Worker('./article.worker.js'))
+  FETCH: makeWebWorkerDriver(new Worker('./article.worker.js'))
 })

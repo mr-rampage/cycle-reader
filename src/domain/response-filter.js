@@ -1,3 +1,3 @@
 export function byCategory (category, response) {
-  return response.request.category === category
+  return response.request && response.request.category === category
 }

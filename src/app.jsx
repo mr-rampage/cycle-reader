@@ -11,18 +11,18 @@ import { periodicRefresh } from './providers/periodic-refresh'
 
 export function main (sources) {
   const search = RssSearch(sources)
-  const feed = Rss({...sources, props: {url$: search.query, category: 'rss'}})
+  const rss = Rss({...sources, props: {url$: search.query, category: 'rss'}})
 
   const feedList = RssList({...sources, props: {feed$: sources.IDB.store(ARTICLE_DB).getAll()}})
   const article = ArticleViewer({...sources, props: {article$: feedList.selected, category: 'article'}})
 
-  const articlesCache = saveArticles({...sources, props: {articles: feed.articles, db: ARTICLE_DB}})
-  const feedCache = subscribeFeed({...sources, props: {category: 'rss', db: FEED_DB}})
+  const articlesCache = saveArticles({...sources, props: {articles: rss.articles, db: ARTICLE_DB}})
+  const feedCache = subscribeFeed({...sources, props: {feed: rss.feed}})
   const feedRefresh = periodicRefresh({...sources, props: {category: 'rss', db: FEED_DB}})
 
   return {
     DOM: render(search.DOM, feedList.DOM, article.DOM),
-    WORKER: proxy(feed.FETCH, article.FETCH, feedRefresh.FETCH),
+    FETCH: proxy(rss.FETCH, article.FETCH, feedRefresh.FETCH),
     IDB: xs.merge(articlesCache.IDB, feedCache.IDB)
   }
 }
