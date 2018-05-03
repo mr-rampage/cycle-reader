@@ -6,12 +6,7 @@ export function Rss ({FETCH, props}) {
     .filter(url => url)
     .map(url => ({url, category: props.category}))
 
-  const response$ = FETCH
-    .filter(byCategory.bind(null, props.category))
-    .map(unmarshal)
-    .flatten()
-
-  const feed$ = response$
+  const feed$ = FETCH
     .filter(byCategory.bind(null, props.category))
 
   const articles$ = feed$
