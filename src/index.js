@@ -5,6 +5,7 @@ import { main } from './app'
 import UIkit from 'uikit'
 import Icons from 'uikit/dist/js/uikit-icons'
 import { makeWebWorkerDriver } from 'cycle-webworker'
+import { makeSelectableDriver } from './drivers/cycle-selectable-driver'
 
 const DATABASE = 'cycle-reader'
 export const ARTICLE_DB = 'article-db'
@@ -27,5 +28,5 @@ run(main, {
       }
     }
   }),
-  FETCH: makeWebWorkerDriver(new Worker('./article.worker.js'))
+  FETCH: makeSelectableDriver(makeWebWorkerDriver(new Worker('./article.worker.js')))
 })

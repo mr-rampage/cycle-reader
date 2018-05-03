@@ -1,13 +1,12 @@
 import { ArticleModal } from './article'
 import * as UIkit from 'uikit'
-import { byCategory } from '../../domain/response-filter'
 
 export function ArticleViewer ({FETCH, props}) {
   const request$ = props.article$
     .map(url => ({url, category: props.category}))
 
   const response$ = FETCH
-    .filter(byCategory.bind(null, props.category))
+    .select(props.category)
     .startWith('')
 
   const vdom$ = response$

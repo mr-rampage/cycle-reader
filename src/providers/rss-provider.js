@@ -1,5 +1,4 @@
 import { unmarshal } from '../domain/rss-to-json'
-import { byCategory } from '../domain/response-filter'
 
 export function Rss ({FETCH, props}) {
   const request$ = props.url$
@@ -7,7 +6,7 @@ export function Rss ({FETCH, props}) {
     .map(url => ({url, category: props.category}))
 
   const feed$ = FETCH
-    .filter(byCategory.bind(null, props.category))
+    .select(props.category)
 
   const articles$ = feed$
     .map(unmarshal)
