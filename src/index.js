@@ -7,6 +7,7 @@ import Icons from 'uikit/dist/js/uikit-icons'
 import { makeWebWorkerDriver } from 'cycle-webworker'
 import { makeSelectableDriver } from './drivers/cycle-selectable-driver'
 import onionify from 'cycle-onionify'
+import { makeFetchDriver } from './drivers/cycle-fetch-driver'
 
 const DATABASE = 'cycle-reader'
 export const ARTICLE_DB = 'article-db'
@@ -29,5 +30,15 @@ run(onionify(main), {
       }
     }
   }),
-  FETCH: makeSelectableDriver(makeWebWorkerDriver(new Worker('./article.worker.js')))
+  FETCH: selectFetchDriver()
 })
+
+function selectFetchDriver () {
+  if (window.Worker) {
+    console.info('Fetch Driver: Web Worker')
+    return makeSelectableDriver(makeWebWorkerDriver(new Worker('./article.worker.js')))
+  } else {
+    console.info('Fetch Driver: Fetch')
+    return makeFetchDriver()
+  }
+}

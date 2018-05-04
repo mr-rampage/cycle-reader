@@ -8,7 +8,8 @@ export function Rss ({onion, FETCH}) {
 
   const feed$ = onion.state$
     .map(state => state.feed)
-    .map(({category}) => FETCH.select(category).flatten())
+    .map(({category}) => FETCH.select(category))
+    .flatten()
     .flatten()
 
   const articles$ = feed$

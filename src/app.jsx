@@ -1,5 +1,6 @@
 import { RssSearch } from './components/rss-search'
 import xs from 'xstream'
+import debounce from 'xstream/extra/debounce'
 import isolate from '@cycle/isolate'
 import { RssList } from './components/rss-list'
 import { Rss } from './providers/rss-provider'
@@ -10,15 +11,13 @@ import { subscribeFeed } from './providers/feed-repository'
 import { periodicRefresh } from './providers/periodic-refresh'
 
 export function main (sources) {
-  sources.onion.state$.addListener({next: console.info})
-
   const search = isolate(RssSearch, 'feed')(sources)
-  const rss = Rss(sources)
+  const feedList = RssList(sources)
 
-  const feedList = RssList({...sources, props: {feed$: sources.IDB.store(ARTICLE_DB).getAll()}})
+  const rss = Rss(sources)
+  const feedCache = isolate(subscribeFeed, 'feed')(sources)
 
   const articlesCache = saveArticles({...sources, props: {articles: rss.articles, db: ARTICLE_DB}})
-  const feedCache = isolate(subscribeFeed, 'feed')(sources)
   const feedRefresh = periodicRefresh({...sources, props: {category: 'rss', db: FEED_DB}})
 
   return {
@@ -36,6 +35,7 @@ function proxy (...fetches) {
 
 function render (...vtrees) {
   return xs.combine.apply(null, vtrees)
+    .compose(debounce(100))
     .map(vdoms =>
       <div>
         {vdoms}
@@ -43,12 +43,13 @@ function render (...vtrees) {
     )
 }
 
-function initialReducer$ () {
+function initialReducer$ (sources) {
   return xs.of(() => ({
     feed: {
       url: '',
       db: FEED_DB,
       category: 'rss'
-    }
+    },
+    articles: sources.IDB.store(ARTICLE_DB).getAll()
   }))
 }
