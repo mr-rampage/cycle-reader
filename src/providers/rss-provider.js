@@ -7,6 +7,7 @@ export function Rss ({FETCH, props}) {
 
   const feed$ = FETCH
     .select(props.category)
+    .flatten()
 
   const articles$ = feed$
     .map(unmarshal)
