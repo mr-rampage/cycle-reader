@@ -1,10 +1,11 @@
 import { $put } from 'cycle-idb'
 
-export function subscribeFeed ({FETCH, props}) {
-  const successfulFetch$ = props.feed
-    .map(response => response.request.href)
+export function subscribeFeed ({onion}) {
+  const successfulFetch$ = onion.state$
+    .filter(({url}) => url)
 
   return {
-    IDB: successfulFetch$.map(href => $put(props.db, {href}))
+    IDB: successfulFetch$
+      .map(({url, db}) => $put(db, {href: url}))
   }
 }

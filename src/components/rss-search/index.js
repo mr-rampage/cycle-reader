@@ -1,6 +1,7 @@
 import { Search } from './search'
 import sampleCombine from 'xstream/extra/sampleCombine'
 import { Url$ } from '../../domain/urls'
+import xs from 'xstream'
 
 export function RssSearch ({DOM}) {
   const submit$ = DOM.select('.uk-search').events('submit', {preventDefault: true})
@@ -16,8 +17,12 @@ export function RssSearch ({DOM}) {
     .startWith('')
     .map(Search)
 
+  const defaultState$ = xs.of(prevState => prevState || {url: ''})
+  const reducer$ = model$.map(url => prevState => ({...prevState, url}))
+
   return {
     DOM: vdom$,
-    query: model$
+    query: model$,
+    onion: xs.merge(defaultState$, reducer$)
   }
 }

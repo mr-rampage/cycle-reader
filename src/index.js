@@ -6,6 +6,7 @@ import UIkit from 'uikit'
 import Icons from 'uikit/dist/js/uikit-icons'
 import { makeWebWorkerDriver } from 'cycle-webworker'
 import { makeSelectableDriver } from './drivers/cycle-selectable-driver'
+import onionify from 'cycle-onionify'
 
 const DATABASE = 'cycle-reader'
 export const ARTICLE_DB = 'article-db'
@@ -18,7 +19,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./cache.worker.js'))
 }
 
-run(main, {
+run(onionify(main), {
   DOM: makeDOMDriver('#root'),
   IDB: makeIdbDriver(DATABASE, 1, upgradeDb => {
     switch (upgradeDb.oldVersion) {
