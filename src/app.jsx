@@ -11,8 +11,10 @@ import { subscribeFeed } from './providers/feed-repository'
 import { periodicRefresh } from './providers/periodic-refresh'
 
 export function main (sources) {
+  sources.onion.state$.addListener({next: console.info})
+
   const search = isolate(RssSearch, 'feed')(sources)
-  const rss = Rss({...sources, props: {url$: search.query, category: 'rss'}})
+  const rss = Rss(sources)
 
   const feedList = RssList({...sources, props: {feed$: sources.IDB.store(ARTICLE_DB).getAll()}})
   const article = ArticleViewer({...sources, props: {article$: feedList.selected, category: 'article'}})
@@ -25,7 +27,7 @@ export function main (sources) {
     DOM: render(search.DOM, feedList.DOM, article.DOM),
     FETCH: proxy(rss.FETCH, article.FETCH, feedRefresh.FETCH),
     IDB: xs.merge(articlesCache.IDB, feedCache.IDB),
-    onion: xs.merge(initialReducer$(sources), search.onion)
+    onion: xs.merge(initialReducer$(sources), search.onion, rss.onion)
   }
 }
 
@@ -43,7 +45,7 @@ function render (...vtrees) {
     )
 }
 
-function initialReducer$ (sources) {
+function initialReducer$ () {
   return xs.of(() => ({
     feed: {
       url: '',
@@ -51,7 +53,7 @@ function initialReducer$ (sources) {
       category: 'rss'
     },
     articles: {
-      items: sources.IDB.store(ARTICLE_DB).getAll(),
+      fetched: [],
       db: ARTICLE_DB,
       category: 'article'
     }
