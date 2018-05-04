@@ -1,3 +1,4 @@
+import xs from 'xstream'
 import { adapt } from '@cycle/run/lib/adapt'
 
 export function makeSelectableDriver (driver) {
@@ -11,6 +12,8 @@ export function makeSelectableDriver (driver) {
 }
 
 function select (message$, category) {
-  const byCategory$ = message$.filter(event => event.request && event.request.category === category)
-  return adapt(byCategory$)
+  const byCategory$$ = message$
+    .filter(event => event.request && event.request.category === category)
+    .map(xs.of)
+  return adapt(byCategory$$)
 }
