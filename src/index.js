@@ -6,6 +6,7 @@ import UIkit from 'uikit'
 import Icons from 'uikit/dist/js/uikit-icons'
 import { makeWebWorkerDriver } from 'cycle-webworker'
 import { makeSelectableDriver } from './drivers/cycle-selectable-driver'
+import { makeFetchDriver } from './drivers/cycle-fetch-driver'
 
 const DATABASE = 'cycle-reader'
 export const ARTICLE_DB = 'article-db'
@@ -28,5 +29,15 @@ run(main, {
       }
     }
   }),
-  FETCH: makeSelectableDriver(makeWebWorkerDriver(new Worker('./article.worker.js')))
+  FETCH: selectFetchDriver()
 })
+
+function selectFetchDriver () {
+  if (window.Worker) {
+    console.info('Using web-worker driver')
+    return makeSelectableDriver(makeWebWorkerDriver(new Worker('./article.worker.js')))
+  } else {
+    console.info('Using fetch driver')
+    return makeFetchDriver()
+  }
+}
