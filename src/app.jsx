@@ -17,7 +17,7 @@ export function main (sources) {
   const article = ArticleViewer({...sources, props: {article$: feedList.selected, category: 'article'}})
 
   const articlesCache = saveArticles({...sources, props: {articles: rss.articles, db: ARTICLE_DB}})
-  const feedCache = subscribeFeed({...sources, props: {feed: rss.feed}})
+  const feedCache = subscribeFeed({...sources, props: {feed: rss.feed, db: FEED_DB}})
   const feedRefresh = periodicRefresh({...sources, props: {category: 'rss', db: FEED_DB}})
 
   return {

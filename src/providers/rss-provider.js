@@ -1,4 +1,5 @@
 import { unmarshal } from '../domain/rss-to-json'
+import sampleCombine from 'xstream/extra/sampleCombine'
 
 export function Rss ({FETCH, props}) {
   const request$ = props.url$
@@ -16,6 +17,6 @@ export function Rss ({FETCH, props}) {
   return {
     FETCH: request$,
     articles: articles$,
-    feed: feed$
+    feed: feed$.compose(sampleCombine(props.url$))
   }
 }

@@ -7,6 +7,7 @@ export function ArticleViewer ({FETCH, props}) {
 
   const response$ = FETCH
     .select(props.category)
+    .flatten()
     .startWith('')
 
   const vdom$ = response$
