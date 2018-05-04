@@ -15,16 +15,9 @@ export function Rss ({onion, FETCH}) {
     .map(unmarshal)
     .flatten()
 
-  const reducer$ = articles$.map(articles => prevState => {
-    let state = {...prevState}
-    state.articles.fetched = articles
-    return state
-  })
-
   return {
     FETCH: request$,
     articles: articles$,
-    feed: feed$,
-    onion: reducer$
+    feed: feed$
   }
 }
