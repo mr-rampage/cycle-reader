@@ -12,8 +12,6 @@ export function main (sources) {
 
   const persistFeed = isolate(FeedRepository, 'new-feed')({...sources, props: { feedDb: FEED_DB, articlesDb: ARTICLE_DB }})
 
-  sources.onion.state$.addListener({next: console.info})
-
   return {
     DOM: view(addFeed.DOM, articleList.DOM),
     FETCH: proxy(addFeed.FETCH, articleList.FETCH),
