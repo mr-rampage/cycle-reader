@@ -1,55 +1,37 @@
-import { RssSearch } from './components/rss-search'
+import { AddFeed } from './components/add-feed'
 import xs from 'xstream'
-import debounce from 'xstream/extra/debounce'
 import isolate from '@cycle/isolate'
-import { RssList } from './components/rss-list'
-import { Rss } from './providers/rss-provider'
+import { ArticleList } from './components/article-list'
 import { proxied } from './domain/proxy-request'
 import { ARTICLE_DB, FEED_DB } from './index'
-import { saveArticles } from './providers/article-repository'
-import { subscribeFeed } from './providers/feed-repository'
-import { periodicRefresh } from './providers/periodic-refresh'
+import { FeedRepository } from './components/feed-repository'
 
 export function main (sources) {
-  const search = isolate(RssSearch, 'feed')(sources)
-  const feedList = RssList(sources)
+  const addFeed = isolate(AddFeed, 'new-feed')({...sources, props: { category: 'rss' }})
+  const articleList = isolate(ArticleList, 'feed-list')({...sources, props: { db: ARTICLE_DB }})
 
-  const rss = Rss(sources)
-  const feedCache = isolate(subscribeFeed, 'feed')(sources)
+  const persistFeed = isolate(FeedRepository, 'new-feed')({...sources, props: { feedDb: FEED_DB, articlesDb: ARTICLE_DB }})
 
-  const articlesCache = saveArticles({...sources, props: {articles: rss.articles, db: ARTICLE_DB}})
-  const feedRefresh = periodicRefresh({...sources, props: {category: 'rss', db: FEED_DB}})
+  sources.onion.state$.addListener({next: console.info})
 
   return {
-    DOM: render(search.DOM, feedList.DOM),
-    FETCH: proxy(rss.FETCH, feedList.FETCH, feedRefresh.FETCH),
-    IDB: xs.merge(articlesCache.IDB, feedCache.IDB),
-    onion: xs.merge(initialReducer$(sources), search.onion)
+    DOM: view(addFeed.DOM, articleList.DOM),
+    FETCH: proxy(addFeed.FETCH, articleList.FETCH),
+    IDB: persistFeed.IDB,
+    onion: xs.merge(addFeed.onion, persistFeed.onion, articleList.onion)
   }
 }
 
 function proxy (...fetches) {
   return xs.merge.apply(null, fetches)
-    .map(request => ({...request, url: proxied(request.url), href: request.url, options: {mode: 'cors'}}))
+    .map(request => ({...request, url: proxied(request.uri), href: request.uri, options: {mode: 'cors'}}))
 }
 
-function render (...vtrees) {
+function view (...vtrees) {
   return xs.combine.apply(null, vtrees)
-    .compose(debounce(100))
     .map(vdoms =>
       <div>
         {vdoms}
       </div>
     )
-}
-
-function initialReducer$ (sources) {
-  return xs.of(() => ({
-    feed: {
-      url: '',
-      db: FEED_DB,
-      category: 'rss'
-    },
-    articles: sources.IDB.store(ARTICLE_DB).getAll()
-  }))
 }

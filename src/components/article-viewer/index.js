@@ -1,25 +1,37 @@
 import { ArticleModal } from './article'
 import * as UIkit from 'uikit'
 
-export function ArticleViewer ({FETCH, props}) {
-  const request$ = props.article$
-    .map(url => ({url, category: props.category}))
+export function ArticleViewer (sources) {
+  const actions = intent(sources.onion.state$, sources.FETCH)
+  const vdom$ = view(actions.showArticle$)
 
-  const response$ = FETCH
-    .select(props.category)
-    .flatten()
-    .startWith('')
-
-  const vdom$ = response$
-    .map(ArticleModal)
-
-  const modalListener = response$
-    .drop(1)
-    .addListener({next: () => UIkit.modal('[uk-modal]').show()})
+  actions.showArticle$.drop(1)
+    .debug()
+    .addListener({
+      next: () => UIkit.modal('[uk-modal]').show()
+    })
 
   return {
     DOM: vdom$,
-    FETCH: request$,
-    modal: modalListener
+    FETCH: actions.fetchArticle$
   }
+}
+
+function intent (stateSource, fetchSource) {
+  const fetchArticle$ = stateSource
+    .filter(uri => uri)
+    .map(uri => ({uri, category: 'article'}))
+
+  const showArticle$ = fetchSource.select('article')
+    .flatten()
+    .startWith('')
+
+  return {
+    fetchArticle$,
+    showArticle$
+  }
+}
+
+function view (articleSource) {
+  return articleSource.map(ArticleModal)
 }
