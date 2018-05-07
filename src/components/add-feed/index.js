@@ -45,7 +45,7 @@ function model (actions) {
 
   const uriReducer$ = actions.addFeed$
     .filter(isUrl)
-    .map(uri => () => ({uri, articles: []}))
+    .map(uri => prevState => ({...prevState, uri}))
 
   const articlesReducer$ = actions.fetchedFeed$
     .map(articles => prevState => ({...prevState, articles}))

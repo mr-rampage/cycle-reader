@@ -22,7 +22,7 @@ export function main (sources) {
 
 function proxy (...fetches) {
   return xs.merge.apply(null, fetches)
-    .map(request => ({...request, url: proxied(request.uri), href: request.uri, options: {mode: 'cors'}}))
+    .map(request => ({...request, url: proxied(request.uri), options: {mode: 'cors'}}))
 }
 
 function view (...vtrees) {
