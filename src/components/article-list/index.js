@@ -42,6 +42,11 @@ function model (actions) {
 function view (dbSource) {
   return dbSource.getAll()
     .filter(articles => articles.length > 0)
+    .map(articles => articles.sort(byIndex))
     .map(Feed)
     .startWith('')
+}
+
+function byIndex (a, b) {
+  return b.index - a.index
 }
