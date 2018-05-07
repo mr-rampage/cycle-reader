@@ -1,33 +1,29 @@
-import { ArticleModal } from './article'
 import * as UIkit from 'uikit'
+import { ArticleModal } from './article'
+import { FetchClient } from '../http-client'
 
 export function ArticleViewer (sources) {
-  const actions = intent(sources.onion.state$, sources.FETCH)
+  const articleSource = FetchClient('article')(sources)
+
+  const actions = intent(articleSource.response)
   const vdom$ = view(actions.showArticle$)
 
   actions.showArticle$.drop(1)
-    .debug()
     .addListener({
       next: () => UIkit.modal('[uk-modal]').show()
     })
 
   return {
     DOM: vdom$,
-    FETCH: actions.fetchArticle$
+    FETCH: articleSource.FETCH
   }
 }
 
-function intent (stateSource, fetchSource) {
-  const fetchArticle$ = stateSource
-    .filter(uri => uri)
-    .map(uri => ({uri, category: 'article'}))
-
-  const showArticle$ = fetchSource.select('article')
-    .flatten()
+function intent (articleSource) {
+  const showArticle$ = articleSource
     .startWith('')
 
   return {
-    fetchArticle$,
     showArticle$
   }
 }
