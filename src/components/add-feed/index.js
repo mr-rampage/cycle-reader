@@ -4,7 +4,7 @@ import isolate from '@cycle/isolate'
 import { Search } from './search'
 import { isUrl } from '../../domain/urls'
 import { unmarshal } from '../../domain/rss-to-json'
-import { FetchClient } from '../http-client'
+import { FetchClient } from '../fetch-client'
 
 export function AddFeed (sources) {
   const feedSource = isolate(FetchClient('rss'), 'uri')(sources)

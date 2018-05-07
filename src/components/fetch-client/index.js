@@ -10,7 +10,7 @@ export function FetchClient (category) {
 
   function intent (stateSource, fetchSource) {
     const request$ = stateSource
-      .filter(state => !!state)
+      .filter(uri => !!uri)
       .map(uri => ({uri, category}))
 
     const response$ = fetchSource.select(category)

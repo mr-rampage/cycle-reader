@@ -1,6 +1,6 @@
 import * as UIkit from 'uikit'
 import { ArticleModal } from './article'
-import { FetchClient } from '../http-client'
+import { FetchClient } from '../fetch-client'
 
 export function ArticleViewer (sources) {
   const articleSource = FetchClient('article')(sources)
