@@ -7,7 +7,7 @@ import { ARTICLE_DB, FEED_DB } from './index'
 import { FeedRepository } from './components/feed-repository'
 
 export function main (sources) {
-  const addFeed = isolate(AddFeed, 'new-feed')({...sources, props: { category: 'rss' }})
+  const addFeed = isolate(AddFeed, 'new-feed')(sources)
   const articleList = isolate(ArticleList, 'feed-list')({...sources, props: { db: ARTICLE_DB }})
 
   const persistFeed = isolate(FeedRepository, 'new-feed')({...sources, props: { feedDb: FEED_DB, articlesDb: ARTICLE_DB }})
