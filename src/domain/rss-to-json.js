@@ -23,7 +23,12 @@ function extractArticles (feed) {
 function extractThumbnail (...sources) {
   const htmlString = sources.filter(x => x)[0]
   const matches = htmlString.match(/<img .*?>/)
-  return matches ? matches[0] : ''
+  return matches ? extractUrl(matches[0]) : ''
+}
+
+function extractUrl (image) {
+  const matches = image.match(/src="(.*?)"/)
+  return matches.length > 1 ? matches[1] : ''
 }
 
 function enrich (rawHtml) {
