@@ -16,7 +16,7 @@ export function main (sources) {
     DOM: view(addFeed.DOM, articleList.DOM),
     FETCH: proxy(addFeed.FETCH, articleList.FETCH),
     IDB: persistFeed.IDB,
-    onion: xs.merge(addFeed.onion, persistFeed.onion, articleList.onion)
+    onion: xs.merge(addFeed.onion, articleList.onion)
   }
 }
 

@@ -3,13 +3,10 @@ import { $put } from 'cycle-idb'
 
 export function FeedRepository (sources) {
   const actions = intent(sources.onion.state$, sources.IDB, sources.props)
-  const reducer$ = model(actions)
-
   const idb$ = actions.persist$.map(xs.fromArray).flatten()
 
   return {
-    IDB: idb$,
-    onion: reducer$
+    IDB: idb$
   }
 }
 
@@ -23,11 +20,6 @@ function intent (stateSource, dbSource, propSource) {
   }
 }
 
-function model (actions) {
-  return actions.persist$
-    .map(() => prevState => ({...prevState, reset: true}))
-}
-
 function hasFetched (state) {
-  return !!state.uri && !!state.articles && state.articles.length > 0 && state.reset === false
+  return !!state.uri && !!state.articles && state.articles.length > 0
 }
