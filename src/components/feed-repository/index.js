@@ -17,9 +17,9 @@ function intent (stateSource, propSource) {
   const persist$ = articleSource
     .filter(articles => articles.length)
     .compose(sampleCombine(feedSource))
-    .map(([articles, feed]) => [
+    .map(([articles, href]) => [
       articles.map(article => $put(propSource.articlesDb, article)),
-      $put(propSource.feedDb, feed)
+      $put(propSource.feedDb, {href})
     ])
     .map(([articlePuts, feedPuts]) => articlePuts.concat(feedPuts))
     .map(xs.fromArray)
