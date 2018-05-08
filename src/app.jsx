@@ -8,9 +8,9 @@ import { FetchIndicator } from './containers/fetch-indicator'
 
 export function main (sources) {
   const addFeed = isolate(AddFeed, 'new-feed')(sources)
+  const spinner = FetchIndicator(sources)
   const articleList = isolate(ArticleList, 'feed-list')(sources)
 
-  const spinner = FetchIndicator(sources)
   const persistFeed = FeedRepository(sources)
 
   return {
