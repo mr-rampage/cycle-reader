@@ -3,7 +3,6 @@ import xs from 'xstream'
 import isolate from '@cycle/isolate'
 import { ArticleList } from './containers/article-list'
 import { proxied } from './domain/proxy-request'
-import { ARTICLE_DB, FEED_DB } from './index'
 import { FeedRepository } from './containers/feed-repository'
 import { FetchIndicator } from './containers/fetch-indicator'
 
@@ -11,10 +10,8 @@ export function main (sources) {
   const addFeed = isolate(AddFeed, 'new-feed')(sources)
   const articleList = isolate(ArticleList, 'feed-list')(sources)
 
-  const persistFeed = FeedRepository({...sources, props: { feedDb: FEED_DB, articlesDb: ARTICLE_DB }})
   const spinner = FetchIndicator(sources)
-
-  sources.onion.state$.addListener({next: console.info})
+  const persistFeed = FeedRepository(sources)
 
   return {
     DOM: view(spinner.DOM, addFeed.DOM, articleList.DOM),
