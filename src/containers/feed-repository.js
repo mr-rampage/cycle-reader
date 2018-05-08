@@ -3,10 +3,13 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 import { $put } from 'cycle-idb'
 
 export function FeedRepository (sources) {
-  const actions = intent(sources.onion.state$, sources.props)
+  const newFeed$ = sources.onion.state$.map(state => state['new-feed'])
+  const actions = intent(newFeed$, sources.props)
+  const reducer$ = model(sources.IDB.store(sources.props.articlesDb))
 
   return {
-    IDB: actions.persist$
+    IDB: actions.persist$,
+    onion: reducer$
   }
 }
 
@@ -28,4 +31,11 @@ function intent (stateSource, propSource) {
   return {
     persist$
   }
+}
+
+function model (actions) {
+  const feedListReducer$ = actions.getAll()
+    .map(articles => prevState => ({...prevState, 'feed-list': { viewing: '', articles }}))
+
+  return feedListReducer$
 }

@@ -8,7 +8,7 @@ export function ArticleList (sources) {
   const reducer$ = model(actions)
 
   const viewer$ = isolate(ArticleViewer, 'viewing')({...sources})
-  const vdom$ = view(sources.IDB.store(sources.props.db))
+  const vdom$ = view(sources.onion.state$)
 
   return {
     DOM: xs.combine(vdom$, viewer$.DOM)
@@ -31,7 +31,7 @@ function intent (domSource) {
 }
 
 function model (actions) {
-  const defaultReducer$ = xs.of(prevState => prevState || {viewing: ''})
+  const defaultReducer$ = xs.of(prevState => prevState || {viewing: '', articles: []})
 
   const viewArticle$ = actions.request$
     .map(viewing => prevState => ({ ...prevState, viewing }))
@@ -39,10 +39,10 @@ function model (actions) {
   return xs.merge(defaultReducer$, viewArticle$)
 }
 
-function view (dbSource) {
-  return dbSource.getAll()
-    .filter(articles => articles.length > 0)
-    .map(articles => articles.sort(byIndex))
+function view (state) {
+  return state
+    .filter(({articles}) => articles.length > 0)
+    .map(({articles}) => articles.sort(byIndex))
     .map(Feed)
     .startWith('')
 }
