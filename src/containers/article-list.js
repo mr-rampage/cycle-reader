@@ -15,7 +15,6 @@ export function ArticleList (sources) {
       .map(vtrees => (
         <div>{vtrees}</div>
       )),
-    FETCH: viewer$.FETCH,
     onion: reducer$
   }
 }
