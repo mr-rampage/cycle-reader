@@ -7,7 +7,7 @@ export function ArticleList (sources) {
   const actions = intent(sources.DOM)
   const reducer$ = model(actions)
 
-  const viewer$ = isolate(ArticleViewer, 'viewing')({...sources})
+  const viewer$ = isolate(ArticleViewer, 'article')({...sources})
   const vdom$ = view(sources.onion.state$)
 
   return {

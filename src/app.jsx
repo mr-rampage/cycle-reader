@@ -12,15 +12,15 @@ export function main (sources) {
   const articleList = isolate(ArticleList, 'feed-list')(sources)
 
   const persistFeed = FeedRepository({...sources, props: { feedDb: FEED_DB, articlesDb: ARTICLE_DB }})
+  const spinner = FetchIndicator(sources)
 
-  const outgoingRequest$ = proxy(addFeed.FETCH, articleList.FETCH)
-  const spinner = FetchIndicator({props: {requests: outgoingRequest$, responses: sources.FETCH.select()}})
+  sources.onion.state$.addListener({next: console.info})
 
   return {
     DOM: view(spinner.DOM, addFeed.DOM, articleList.DOM),
-    FETCH: outgoingRequest$,
+    FETCH: proxy(spinner.FETCH),
     IDB: persistFeed.IDB,
-    onion: xs.merge(addFeed.onion, articleList.onion, persistFeed.onion)
+    onion: xs.merge(addFeed.onion, articleList.onion, persistFeed.onion, spinner.onion)
   }
 }
 

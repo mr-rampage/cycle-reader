@@ -1,26 +1,20 @@
 import xs from 'xstream'
 import sampleCombine from 'xstream/extra/sampleCombine'
-import isolate from '@cycle/isolate'
 import { Search } from '../components/search'
 import { isUrl } from '../domain/urls'
-import { unmarshal } from '../domain/rss-to-json'
-import { FetchClient } from './fetch-client'
 
 export function AddFeed (sources) {
-  const feedSource = isolate(FetchClient('rss'), 'uri')(sources)
-
-  const actions = intent(sources.onion.state$, sources.DOM, feedSource.response)
+  const actions = intent(sources.onion.state$, sources.DOM)
   const reducer$ = model(actions)
   const vdom$ = view(sources.onion.state$)
 
   return {
     DOM: vdom$,
-    FETCH: feedSource.FETCH,
     onion: reducer$
   }
 }
 
-function intent (stateSource, domSource, feedSource) {
+function intent (stateSource, domSource) {
   const submit$ = domSource.select('.uk-search').events('submit', {preventDefault: true})
   const search$ = domSource.select('.uk-search-input').events('input')
 
@@ -28,13 +22,8 @@ function intent (stateSource, domSource, feedSource) {
     .compose(sampleCombine(search$))
     .map(([submitEvent, inputEvent]) => inputEvent.target.value)
 
-  const fetchedFeed$ = feedSource
-    .map(unmarshal)
-    .flatten()
-
   return {
-    addFeed$,
-    fetchedFeed$
+    addFeed$
   }
 }
 
@@ -47,10 +36,7 @@ function model (actions) {
     .filter(isUrl)
     .map(uri => prevState => ({...prevState, uri}))
 
-  const articlesReducer$ = actions.fetchedFeed$
-    .map(articles => prevState => ({...prevState, articles}))
-
-  return xs.merge(defaultReducer$, uriReducer$, articlesReducer$)
+  return xs.merge(defaultReducer$, uriReducer$)
 }
 
 function view (state$) {

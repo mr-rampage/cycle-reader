@@ -1,11 +1,8 @@
 import * as UIkit from 'uikit'
 import { ArticleModal } from '../components/article-modal'
-import { FetchClient } from './fetch-client'
 
 export function ArticleViewer (sources) {
-  const articleSource = FetchClient('article')(sources)
-
-  const actions = intent(articleSource.response)
+  const actions = intent(sources.onion.state$)
   const vdom$ = view(actions.showArticle$)
 
   actions.showArticle$.drop(1)
@@ -14,8 +11,7 @@ export function ArticleViewer (sources) {
     })
 
   return {
-    DOM: vdom$,
-    FETCH: articleSource.FETCH
+    DOM: vdom$
   }
 }
 
