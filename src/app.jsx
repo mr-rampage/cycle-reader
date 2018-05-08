@@ -5,18 +5,22 @@ import { ArticleList } from './containers/article-list'
 import { proxied } from './domain/proxy-request'
 import { ARTICLE_DB, FEED_DB } from './index'
 import { FeedRepository } from './containers/feed-repository'
+import { FetchIndicator } from './containers/fetch-indicator'
 
 export function main (sources) {
   const addFeed = isolate(AddFeed, 'new-feed')(sources)
-  const articleList = isolate(ArticleList, 'feed-list')({...sources, props: { db: ARTICLE_DB }})
+  const articleList = isolate(ArticleList, 'feed-list')(sources)
 
-  const persistFeed = isolate(FeedRepository, 'new-feed')({...sources, props: { feedDb: FEED_DB, articlesDb: ARTICLE_DB }})
+  const persistFeed = FeedRepository({...sources, props: { feedDb: FEED_DB, articlesDb: ARTICLE_DB }})
+
+  const outgoingRequest$ = proxy(addFeed.FETCH, articleList.FETCH)
+  const spinner = FetchIndicator({props: {requests: outgoingRequest$, responses: sources.FETCH.select()}})
 
   return {
-    DOM: view(addFeed.DOM, articleList.DOM),
-    FETCH: proxy(addFeed.FETCH, articleList.FETCH),
+    DOM: view(spinner.DOM, addFeed.DOM, articleList.DOM),
+    FETCH: outgoingRequest$,
     IDB: persistFeed.IDB,
-    onion: xs.merge(addFeed.onion, articleList.onion)
+    onion: xs.merge(addFeed.onion, articleList.onion, persistFeed.onion)
   }
 }
 
@@ -25,11 +29,14 @@ function proxy (...fetches) {
     .map(request => ({...request, url: proxied(request.uri), options: {mode: 'cors'}}))
 }
 
-function view (...vtrees) {
-  return xs.combine.apply(null, vtrees)
-    .map(vdoms =>
+function view (spinner, addFeed, list) {
+  return xs.combine(spinner, addFeed, list)
+    .map(([spinner, addFeed, list]) =>
       <div>
-        {vdoms}
+        <div className='uk-flex uk-flex-middle uk-padding-small uk-padding-remove-top uk-padding-remove-bottom'>
+          {addFeed}{spinner}
+        </div>
+        {list}
       </div>
     )
 }

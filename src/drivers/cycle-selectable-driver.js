@@ -15,10 +15,16 @@ export function makeSelectableDriver (driver) {
 }
 
 function select (message$, category) {
-  const byCategory$$ = message$
-    .filter(event => event.request && event.request.category === category)
+  const select$$ = message$
+    .filter(byCategory.bind(null, category))
     .map(xs.of)
-  return adapt(byCategory$$)
+  return adapt(select$$)
+}
+
+function byCategory (category, event) {
+  return category
+    ? event.request && event.request.category === category
+    : true
 }
 
 function sameRequest (previous, current) {

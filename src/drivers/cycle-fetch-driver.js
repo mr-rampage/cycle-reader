@@ -37,8 +37,15 @@ function createResponse$ ({url, options}) {
 }
 
 function select (response$$, category) {
-  const byCategory$$ = response$$.filter(response$ => response$.request && response$.request.category === category)
+  const byCategory$$ = response$$
+    .filter(byCategory.bind(null, category))
   return adapt(byCategory$$)
+}
+
+function byCategory (category, event) {
+  return category
+    ? event.request && event.request.category === category
+    : true
 }
 
 function sameRequest (previous, current) {
