@@ -1,7 +1,7 @@
 import xs from 'xstream'
 import isolate from '@cycle/isolate'
-import { Feed } from './feed'
-import { ArticleViewer } from '../article-viewer'
+import { Feed } from '../components/feed'
+import { ArticleViewer } from './article-viewer'
 
 export function ArticleList (sources) {
   const actions = intent(sources.DOM)

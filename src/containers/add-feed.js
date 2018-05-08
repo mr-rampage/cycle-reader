@@ -1,10 +1,10 @@
 import xs from 'xstream'
 import sampleCombine from 'xstream/extra/sampleCombine'
 import isolate from '@cycle/isolate'
-import { Search } from './search'
-import { isUrl } from '../../domain/urls'
-import { unmarshal } from '../../domain/rss-to-json'
-import { FetchClient } from '../fetch-client'
+import { Search } from '../components/search'
+import { isUrl } from '../domain/urls'
+import { unmarshal } from '../domain/rss-to-json'
+import { FetchClient } from './fetch-client'
 
 export function AddFeed (sources) {
   const feedSource = isolate(FetchClient('rss'), 'uri')(sources)

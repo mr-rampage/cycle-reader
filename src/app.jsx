@@ -1,10 +1,10 @@
-import { AddFeed } from './components/add-feed'
+import { AddFeed } from './containers/add-feed'
 import xs from 'xstream'
 import isolate from '@cycle/isolate'
-import { ArticleList } from './components/article-list'
+import { ArticleList } from './containers/article-list'
 import { proxied } from './domain/proxy-request'
 import { ARTICLE_DB, FEED_DB } from './index'
-import { FeedRepository } from './components/feed-repository'
+import { FeedRepository } from './containers/feed-repository'
 
 export function main (sources) {
   const addFeed = isolate(AddFeed, 'new-feed')(sources)
