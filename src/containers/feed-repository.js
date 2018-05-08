@@ -20,14 +20,17 @@ function intent (sources) {
   const articleSource = stateSource.map(({articles}) => articles)
   const feedSource = stateSource.map(({uri}) => uri)
 
-  const persist$ = articleSource
+  const newArticle$ = articleSource
     .filter(articles => articles.length)
+    .compose(sampleCombine(sources.IDB.store(propSource.articlesDb).getAllKeys()))
+    .map(([articles, existing]) => articles.filter(article => existing.indexOf(article.link) < 0))
+
+  const persist$ = newArticle$
     .compose(sampleCombine(feedSource))
-    .map(([articles, href]) => [
-      articles.map(article => $put(propSource.articlesDb, article)),
-      $put(propSource.feedDb, {href})
-    ])
-    .map(([articlePuts, feedPuts]) => articlePuts.concat(feedPuts))
+    .map(([articles, href]) => articles
+      .map(article => $put(propSource.articlesDb, article))
+      .concat($put(propSource.feedDb, {href}))
+    )
     .map(xs.fromArray)
     .flatten()
 
@@ -37,6 +40,9 @@ function intent (sources) {
 }
 
 function model (sources) {
-  return sources.IDB.store(sources.props.articlesDb).getAll()
+  const defaultReducer$ = xs.of(prevState => prevState || {viewing: '', articles: []})
+  const articlesReducer$ = sources.IDB.store(sources.props.articlesDb).getAll()
     .map(articles => prevState => ({...prevState, 'feed-list': {viewing: '', articles}}))
+
+  return xs.merge(defaultReducer$, articlesReducer$)
 }

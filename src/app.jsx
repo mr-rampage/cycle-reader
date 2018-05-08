@@ -20,7 +20,7 @@ export function main (sources) {
     DOM: view(spinner.DOM, addFeed.DOM, articleList.DOM),
     FETCH: proxy(spinner.FETCH),
     IDB: persistFeed.IDB,
-    onion: xs.merge(addFeed.onion, articleList.onion, persistFeed.onion, spinner.onion)
+    onion: xs.merge(addFeed.onion, articleList.onion, spinner.onion, persistFeed.onion)
   }
 }
 

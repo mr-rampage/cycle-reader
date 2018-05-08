@@ -59,7 +59,7 @@ function view (request$, response$) {
   const showSpinner$ = xs.merge(
     request$.map(() => true),
     response$.map(() => false)
-  ).debug()
+  )
 
   return showSpinner$.map(Spinner).startWith('')
 }
