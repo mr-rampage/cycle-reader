@@ -1,4 +1,4 @@
-import { AddFeed } from './containers/add-feed'
+import AddFeed from './containers/add-feed'
 import xs from 'xstream'
 import isolate from '@cycle/isolate'
 import { ArticleList } from './containers/article-list'

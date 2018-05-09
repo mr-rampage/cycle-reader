@@ -1,10 +1,11 @@
 import test from 'ava'
 import { makeFetchDriver } from './cycle-fetch-driver'
-import fromDiagram from 'xstream/extra/fromDiagram'
+import { mockTimeSource } from '@cycle/time'
 
 test.beforeEach(t => {
   const fakeResponse = {}
 
+  t.context.Time = mockTimeSource()
   t.context.driver = makeFetchDriver()
   t.context.fakeResponse = fakeResponse
 
@@ -20,48 +21,29 @@ test.beforeEach(t => {
 })
 
 test.cb('should drop requests for the same url', t => {
-  t.plan(1)
-  const request$ = fromDiagram('a--b---c|', {
-    values: {
-      a: {url: 'same', category: 'bar'},
-      b: {url: 'same', category: 'dog'},
-      c: {url: 'same', category: 'bar'}
-    }
-  })
+  const Time = t.context.Time
 
-  t.context.driver(request$)
-    .select('bar')
-    .flatten()
-    .addListener({
-      next: actual => {
-        t.deepEqual(actual, t.context.fakeResponse)
-        t.end()
-      }
-    })
+  const request$ = Time.diagram('a--b---c|', {
+    a: {url: 'same', category: 'bar'},
+    b: {url: 'same', category: 'dog'},
+    c: {url: 'same', category: 'bar'}
+  })
+  const expected$ = Time.diagram('a', {a: t.context.fakeResponse})
+
+  Time.assertEqual(t.context.driver(request$).select('bar').flatten(), expected$)
+  Time.run(t.end)
 })
 
 test.cb('should select responses by category', t => {
-  t.plan(2)
+  const Time = t.context.Time
 
-  const request$ = fromDiagram('a--b---c|', {
-    values: {
-      a: {url: 'same', category: 'bar'},
-      b: {url: 'different', category: 'dog'},
-      c: {url: 'similar', category: 'bar'}
-    }
+  const request$ = Time.diagram('a--b---c|', {
+    a: {url: 'same', category: 'bar'},
+    b: {url: 'different', category: 'dog'},
+    c: {url: 'similar', category: 'bar'}
   })
+  const expected$ = Time.diagram('a------c', {a: t.context.fakeResponse, c: t.context.fakeResponse})
 
-  const expected = [t.context.fakeResponse, t.context.fakeResponse]
-
-  t.context.driver(request$)
-    .select('bar')
-    .flatten()
-    .addListener({
-      next: actual => {
-        t.deepEqual(actual, expected.shift())
-        if (expected.length === 0) {
-          t.end()
-        }
-      }
-    })
+  Time.assertEqual(t.context.driver(request$).select('bar').flatten(), expected$)
+  Time.run(t.end)
 })

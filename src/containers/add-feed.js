@@ -3,8 +3,8 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 import { Search } from '../components/search'
 import { isUrl } from '../domain/urls'
 
-export function AddFeed (sources) {
-  const actions = intent(sources.onion.state$, sources.DOM)
+export default function AddFeed (sources) {
+  const actions = intent(sources.DOM)
   const reducer$ = model(actions)
   const vdom$ = view(sources.onion.state$)
 
@@ -14,7 +14,7 @@ export function AddFeed (sources) {
   }
 }
 
-function intent (stateSource, domSource) {
+export function intent (domSource) {
   const submit$ = domSource.select('.uk-search').events('submit', {preventDefault: true})
   const search$ = domSource.select('.uk-search-input').events('input')
 
@@ -27,18 +27,26 @@ function intent (stateSource, domSource) {
   }
 }
 
-function model (actions) {
-  const defaultReducer$ = xs.of(prevState => {
-    return prevState || {uri: '', articles: []}
-  })
+export function model (actions) {
+  const defaultReducer$ = xs.of(defaultReducer)
 
   const uriReducer$ = actions.addFeed$
     .filter(isUrl)
-    .map(uri => prevState => ({...prevState, uri}))
+    .map(uriReducer)
 
   return xs.merge(defaultReducer$, uriReducer$)
 }
 
 function view (state$) {
   return state$.map(Search)
+}
+
+export function defaultReducer (prevState) {
+  return prevState || {uri: '', articles: []}
+}
+
+export function uriReducer (uri) {
+  return function reducer (prevState) {
+    return {...prevState, uri}
+  }
 }
