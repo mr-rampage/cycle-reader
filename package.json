@@ -55,12 +55,8 @@
   },
   "eslintConfig": {
     "extends": "standard",
-    "plugins": [
-      "mocha"
-    ],
     "env": {
-      "browser": true,
-      "mocha": true
+      "browser": true
     }
   },
   "babel": {
