@@ -8,6 +8,7 @@ import { makeWebWorkerDriver } from 'cycle-webworker'
 import { makeSelectableDriver } from './drivers/cycle-selectable-driver'
 import onionify from 'cycle-onionify'
 import { makeFetchDriver } from './drivers/cycle-fetch-driver'
+import ArticleWorker from './workers/article.worker'
 
 const DATABASE = 'cycle-reader'
 export const ARTICLE_DB = 'article-db'
@@ -36,7 +37,7 @@ run(onionify(main), {
 function selectFetchDriver () {
   if (window.Worker) {
     console.info('Fetch Driver: Web Worker')
-    return makeSelectableDriver(makeWebWorkerDriver(new Worker('./article.worker.js')))
+    return makeSelectableDriver(makeWebWorkerDriver(ArticleWorker()))
   } else {
     console.info('Fetch Driver: Fetch')
     return makeFetchDriver()

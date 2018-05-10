@@ -90,6 +90,13 @@ module.exports = {
           fallback: 'style-loader',
           use: ['css-loader', 'less-loader']
         })
+      },
+      {
+        test: /\.worker\.js$/,
+        use: [
+          { loader: 'worker-loader' },
+          { loader: 'babel-loader' }
+        ]
       }
     ]
   },
