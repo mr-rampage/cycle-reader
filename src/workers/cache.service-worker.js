@@ -1,3 +1,5 @@
+import 'babel-polyfill'
+
 const CACHE_VERSION = 1
 
 const CURRENT_CACHES = {
