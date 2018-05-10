@@ -5,16 +5,10 @@ const CURRENT_CACHES = {
   images: 'image-cache-v' + CACHE_VERSION
 }
 
-const urlsToCache = [
-  '/cache.worker.js',
-  '/styles.css',
-  '/vendor.js'
-]
-
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CURRENT_CACHES.site)
-      .then(cache => cache.addAll(urlsToCache))
+      .then(cache => cache.addAll(global.serviceWorkerOption.assets))
   )
 })
 

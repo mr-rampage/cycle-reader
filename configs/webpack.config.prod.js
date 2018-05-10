@@ -9,6 +9,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const MinifyPlugin = require('babel-minify-webpack-plugin')
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin')
 
 // Paths to be used for webpack configuration
 const paths = {
@@ -82,13 +83,31 @@ module.exports = {
       {
         test: /\.worker\.js$/,
         use: [
-          { loader: 'worker-loader' },
-          { loader: 'babel-loader' }
+          { loader: 'worker-loader',
+            options: { inline: true }
+          },
+          { loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+              babelrc: false,
+              presets: [
+                [
+                  'env', { 'targets': { 'browsers': ['last 2 versions'] } }
+                ]
+              ],
+              plugins: [
+                ['transform-object-rest-spread']
+              ]
+            }
+          }
         ]
       }
     ]
   },
   plugins: [
+    new ServiceWorkerWebpackPlugin({
+      entry: path.join(process.cwd(), 'src', 'workers', 'cache.service-worker.js')
+    }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       filename: 'vendor.js',

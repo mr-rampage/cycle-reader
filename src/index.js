@@ -9,6 +9,7 @@ import { makeSelectableDriver } from './drivers/cycle-selectable-driver'
 import onionify from 'cycle-onionify'
 import { makeFetchDriver } from './drivers/cycle-fetch-driver'
 import ArticleWorker from './workers/article.worker'
+import runtime from 'serviceworker-webpack-plugin/lib/runtime'
 
 const DATABASE = 'cycle-reader'
 export const ARTICLE_DB = 'article-db'
@@ -18,7 +19,7 @@ export const FEED_DB = 'feed-db'
 UIkit.use(Icons)
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./cache.worker.js'))
+  window.addEventListener('load', () => runtime.register())
 }
 
 run(onionify(main), {
