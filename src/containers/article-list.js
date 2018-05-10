@@ -3,7 +3,7 @@ import isolate from '@cycle/isolate'
 import { Feed } from '../components/feed'
 import { ArticleViewer } from './article-viewer'
 
-export function ArticleList (sources) {
+export default function ArticleList (sources) {
   const actions = intent(sources.DOM)
   const reducer$ = model(actions)
 
@@ -30,22 +30,37 @@ function intent (domSource) {
 }
 
 function model (actions) {
-  const defaultReducer$ = xs.of(prevState => prevState || {viewing: '', articles: []})
-
-  const viewArticle$ = actions.request$
-    .map(viewing => prevState => ({ ...prevState, viewing }))
-
+  const defaultReducer$ = xs.of(defaultReducer)
+  const viewArticle$ = actions.request$.map(articleReducer)
   return xs.merge(defaultReducer$, viewArticle$)
 }
 
 function view (state) {
   return state
-    .filter(({articles}) => articles.length > 0)
-    .map(({articles}) => articles.sort(byIndex))
+    .filter(hasArticles)
+    .map(sortArticles)
     .map(Feed)
     .startWith('')
 }
 
+function hasArticles ({articles}) {
+  return articles && articles.length > 0
+}
+
+function sortArticles ({articles}) {
+  return articles.sort(byIndex)
+}
+
 function byIndex (a, b) {
   return b.index - a.index
+}
+
+function defaultReducer (prevState) {
+  return prevState || {viewing: '', articles: []}
+}
+
+function articleReducer (viewing) {
+  return function viewingReducer (prevState) {
+    return {...prevState, viewing}
+  }
 }
