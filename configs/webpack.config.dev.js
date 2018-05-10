@@ -9,6 +9,7 @@ const path = require('path')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin')
+const AsyncStylesheetWebpackPlugin = require('async-stylesheet-webpack-plugin')
 
 // Paths to be used for webpack configuration
 const paths = {
@@ -137,6 +138,7 @@ module.exports = {
       favicon: 'public/favicon.png',
       hash: true
     }),
+    new AsyncStylesheetWebpackPlugin(),
     // Makes environment variables available to the JS code, fallback to 'development'
     new webpack.DefinePlugin({
       DEVELOPMENT: JSON.stringify(process.env.NODE_ENV === 'development')
