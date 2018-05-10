@@ -14,7 +14,7 @@ export default function AddFeed (sources) {
   }
 }
 
-export function intent (domSource) {
+function intent (domSource) {
   const submit$ = domSource.select('.uk-search').events('submit', {preventDefault: true})
   const search$ = domSource.select('.uk-search-input').events('input')
 
@@ -27,7 +27,7 @@ export function intent (domSource) {
   }
 }
 
-export function model (actions) {
+function model (actions) {
   const defaultReducer$ = xs.of(defaultReducer)
 
   const uriReducer$ = actions.addFeed$
@@ -41,12 +41,12 @@ function view (state$) {
   return state$.map(Search)
 }
 
-export function defaultReducer (prevState) {
+function defaultReducer (prevState) {
   return prevState || {uri: '', articles: []}
 }
 
-export function uriReducer (uri) {
-  return function reducer (prevState) {
+function uriReducer (uri) {
+  return function uriReducer (prevState) {
     return {...prevState, uri}
   }
 }

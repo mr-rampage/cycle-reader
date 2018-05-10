@@ -1,53 +1,39 @@
+import xs from 'xstream'
 import test from 'ava'
 import { mockDOMSource } from '@cycle/dom'
 import { mockTimeSource } from '@cycle/time'
-import { defaultReducer, intent, model, uriReducer } from './add-feed'
+import AddFeed from './add-feed'
 
-test.cb('DOM actions to produce actions', t => {
+test.cb('onion has a defaultReducer and uriReducer', t => {
   const Time = mockTimeSource()
+  const reducer$ = AddFeed(fakeSources(Time))
+  const expected$ = Time.diagram('a--b', {a: 'defaultReducer', b: 'uriReducer'})
+  Time.assertEqual(reducer$.onion.map(reducer => reducer.name), expected$)
+  Time.run(t.end)
+})
 
-  const actions = intent(mockDOMSource({
-    '.uk-search': {
-      'submit': Time.diagram('--x|')
-    },
-    '.uk-search-input': {
-      'input': Time.diagram('e--|', { e: { target: { value: 'http://www.feed.com/rss' } } })
+test.cb('onion state should contain the search input upon submit', t => {
+  const Time = mockTimeSource()
+  const reducer$ = AddFeed(fakeSources(Time))
+  const prevStates = [null, {uri: 'foo', articles: [1, 2, 3]}]
+
+  const expected$ = Time.diagram('a--b', {a: {uri: '', articles: []}, b: {uri: 'http://www.feed.com/rss', articles: [1, 2, 3]}})
+  Time.assertEqual(reducer$.onion.map(reducer => reducer(prevStates.shift())), expected$)
+  Time.run(t.end)
+})
+
+function fakeSources (Time) {
+  return {
+    DOM: mockDOMSource({
+      '.uk-search': {
+        'submit': Time.diagram('---x')
+      },
+      '.uk-search-input': {
+        'input': Time.diagram('e---', {e: {target: {value: 'http://www.feed.com/rss'}}})
+      }
+    }),
+    onion: {
+      state$: xs.create()
     }
-  }))
-
-  const expected$ = Time.diagram('--x|', {x: 'http://www.feed.com/rss'})
-
-  Time.assertEqual(actions.addFeed$, expected$)
-  Time.run(t.end)
-})
-
-test.cb('reducer should filter urls', t => {
-  const Time = mockTimeSource()
-
-  const reducer$ = model({
-    addFeed$: Time.diagram('--a--b--|', {a: 'invalid', b: 'http://www.feed.com/rss'})
-  })
-  const expected$ = Time.diagram('a----b--|', {a: defaultReducer, b: uriReducer('http://www.feed.com/rss')})
-
-  Time.assertEqual(reducer$, expected$, sameSource)
-  Time.run(t.end)
-
-  function sameSource (actual, expected) {
-    return JSON.stringify(actual) === JSON.stringify(expected)
   }
-})
-
-test('default reducer should take the parent state', t => {
-  const parentState = {}
-  t.is(defaultReducer(parentState), parentState)
-})
-
-test('default reducer should provide a default state', t => {
-  t.deepEqual(defaultReducer(), {uri: '', articles: []})
-})
-
-test('uriReducer should merge the uri into the previous state', t => {
-  const reducer = uriReducer('new')
-  const prevState = {uri: 'previous', articles: [1, 2, 3]}
-  t.deepEqual(reducer(prevState), {uri: 'new', articles: [1, 2, 3]})
-})
+}
