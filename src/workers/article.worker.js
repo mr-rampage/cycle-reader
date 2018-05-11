@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import 'whatwg-fetch'
 
 onmessage = e =>
   fetch(e.data.url, e.data.options)

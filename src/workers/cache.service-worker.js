@@ -1,4 +1,5 @@
-import 'babel-polyfill'
+import 'whatwg-fetch'
+import 'serviceworker-cache-polyfill'
 
 const CACHE_VERSION = 1
 
@@ -21,15 +22,18 @@ self.addEventListener('fetch', event => {
         return response
       } else {
         return fetch(event.request)
-          .then(response => {
-            if (event.request.destination === 'image') {
-              const cloned = response.clone()
-              caches
-                .open(CURRENT_CACHES.images)
-                .then(cache => cache.put(event.request, cloned))
-            }
-            return response
-          })
+          .then(cacheImages.bind(null, event.request))
       }
     }))
 })
+
+function cacheImages (request, response) {
+  if (request.destination === 'image') {
+    const cloned = response.clone()
+    caches
+      .open(CURRENT_CACHES.images)
+      .then(cache => cache.put(request, cloned))
+  }
+
+  return response
+}
