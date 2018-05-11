@@ -1,4 +1,4 @@
-const proxyUrl = 'http://cors-proxy.htmldriven.com/?url='
+const proxyUrl = 'http://localhost:8080/'
 
 export function proxied (url) {
   return proxyUrl + url
