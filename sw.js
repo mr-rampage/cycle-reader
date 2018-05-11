@@ -1,9 +1,9 @@
 var serviceWorkerOption = {
   "assets": [
-    "/afd1ff0756a9e23927cc.worker.js",
-    "/bundle.js",
-    "/vendor.js",
-    "/styles.css"
+    "/cycle-reader/afd1ff0756a9e23927cc.worker.js",
+    "/cycle-reader/bundle.js",
+    "/cycle-reader/vendor.js",
+    "/cycle-reader/styles.css"
   ]
 };
         
