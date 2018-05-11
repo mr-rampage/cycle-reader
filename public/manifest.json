@@ -1,0 +1,15 @@
+{
+  "short_name": "CycleRss",
+  "name": "Cycle.js Rss Reader",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "200x200"
+    }
+  ],
+  "start_url": "index.html?launcher=true",
+  "display": "standalone",
+  "theme_color": "#2196F3",
+  "background_color": "#2196F3"
+}
