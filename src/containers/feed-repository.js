@@ -20,19 +20,9 @@ function intent (sources) {
   const articleSource = stateSource.map(({articles}) => articles)
   const feedSource = stateSource.map(({uri}) => uri)
 
-  const newArticle$ = articleSource
-    .filter(articles => articles.length)
-    .compose(sampleCombine(sources.IDB.store(ARTICLE_DB).getAllKeys()))
-    .map(([articles, existing]) => articles.filter(article => existing.indexOf(article.link) < 0))
-
-  const persist$ = newArticle$
-    .compose(sampleCombine(feedSource))
-    .map(([articles, href]) => articles
-      .map(article => $put(ARTICLE_DB, article))
-      .concat($put(FEED_DB, {href}))
-    )
-    .map(xs.fromArray)
-    .flatten()
+  const persist$ = articleSource
+    .compose(filterNewArticles.bind(null, sources.IDB))
+    .compose(persistArticles.bind(null, feedSource))
 
   return {
     persist$
@@ -40,9 +30,37 @@ function intent (sources) {
 }
 
 function model (sources) {
-  const defaultReducer$ = xs.of(prevState => prevState || {viewing: '', articles: []})
+  const defaultReducer$ = xs.of(defaultReducer)
   const articlesReducer$ = sources.IDB.store(ARTICLE_DB).getAll()
-    .map(articles => prevState => ({...prevState, 'feed-list': {viewing: '', articles}}))
+    .map(articleReducer)
 
   return xs.merge(defaultReducer$, articlesReducer$)
+}
+
+function filterNewArticles (dbSource, article$) {
+  return article$
+    .filter(articles => articles.length)
+    .compose(sampleCombine(dbSource.store(ARTICLE_DB).getAllKeys()))
+    .map(([articles, existing]) => articles.filter(article => existing.indexOf(article.link) < 0))
+}
+
+function persistArticles (feed$, article$) {
+  return article$
+    .compose(sampleCombine(feed$))
+    .map(([articles, href]) => articles
+      .map(article => $put(ARTICLE_DB, article))
+      .concat($put(FEED_DB, {href}))
+    )
+    .map(xs.fromArray)
+    .flatten()
+}
+
+function defaultReducer (prevState) {
+  return prevState || {viewing: '', articles: []}
+}
+
+function articleReducer (articles) {
+  return function (prevState) {
+    return {...prevState, 'feed-list': {viewing: '', articles}}
+  }
 }
