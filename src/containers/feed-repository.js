@@ -39,7 +39,7 @@ function model (sources) {
 
 function filterNewArticles (dbSource, article$) {
   return article$
-    .filter(articles => articles.length)
+    .filter(articles => articles && articles.length)
     .compose(sampleCombine(dbSource.store(ARTICLE_DB).getAllKeys()))
     .map(([articles, existing]) => articles.filter(article => existing.indexOf(article.link) < 0))
 }
