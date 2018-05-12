@@ -1,50 +1,57 @@
 import xs from 'xstream'
-import sampleCombine from 'xstream/extra/sampleCombine'
 import { SettingsMenu } from '../components/settings-menu'
+import { $put } from 'cycle-idb'
+import { SETTINGS_DB } from '../index'
 
 export default function Settings (sources) {
   const actions = intent(sources.DOM)
   const reducer$ = model(actions)
   const vdom$ = view(sources.onion.state$)
+  const persist$ = persist(sources)
 
   return {
     DOM: vdom$,
+    IDB: persist$,
     onion: reducer$
   }
 }
 
 function intent (domSource) {
-  const submit$ = domSource.select('form').events('submit', {preventDefault: true})
-  const proxy$ = domSource.select('.uk-input').events('input')
+  const proxy$ = domSource.select('.uk-input').events('change')
 
-  const setProxy$ = submit$
-    .compose(sampleCombine(proxy$))
-    .map(([submitEvent, inputEvent]) => inputEvent.target.value)
+  const updateSetting$ = proxy$
+    .map((inputEvent) => ({[inputEvent.target.name]: inputEvent.target.value}))
 
   return {
-    setProxy$
+    updateSetting$
   }
 }
 
 function model (actions) {
   const defaultReducer$ = xs.of(defaultReducer)
 
-  const uriReducer$ = actions.setProxy$
-    .map(proxyReducer)
+  const settingReducer$ = actions.updateSetting$
+    .map(updateSetting)
 
-  return xs.merge(defaultReducer$, uriReducer$)
+  return xs.merge(defaultReducer$, settingReducer$)
 }
 
 function view (state$) {
   return state$.map(SettingsMenu)
 }
 
-function defaultReducer (prevState) {
-  return prevState || {proxy: 'http://localhost:8080/'}
+function persist (sources) {
+  return sources.onion.state$
+    .drop(1)
+    .map(settings => $put(SETTINGS_DB, settings))
 }
 
-function proxyReducer (proxy) {
+function defaultReducer (prevState) {
+  return {proxy: '', ...prevState}
+}
+
+function updateSetting (setting) {
   return function uriReducer (prevState) {
-    return {...prevState, proxy}
+    return {...prevState, ...setting}
   }
 }

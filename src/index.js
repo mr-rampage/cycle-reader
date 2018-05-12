@@ -16,6 +16,7 @@ import runtime from 'serviceworker-webpack-plugin/lib/runtime'
 const DATABASE = 'cycle-reader'
 export const ARTICLE_DB = 'article-db'
 export const FEED_DB = 'feed-db'
+export const SETTINGS_DB = 'settings-db'
 
 // loads the Icon plugin
 UIkit.use(Icons)
@@ -31,6 +32,7 @@ run(onionify(main), {
       case 0: {
         upgradeDb.createObjectStore(ARTICLE_DB, {keyPath: 'link', autoIncrement: true})
         upgradeDb.createObjectStore(FEED_DB, {keyPath: 'href', autoIncrement: true})
+        upgradeDb.createObjectStore(SETTINGS_DB, {keyPath: 'profile'})
       }
     }
   }),
