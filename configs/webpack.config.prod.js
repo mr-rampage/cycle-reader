@@ -110,7 +110,8 @@ module.exports = {
   },
   plugins: [
     new ServiceWorkerWebpackPlugin({
-      entry: path.join(process.cwd(), 'src', 'workers', 'cache.service-worker.js')
+      entry: path.join(process.cwd(), 'src', 'workers', 'cache.service-worker.js'),
+      publicPath: './'
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
