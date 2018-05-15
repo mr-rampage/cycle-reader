@@ -2,10 +2,9 @@ import * as UIkit from 'uikit'
 import { ArticleModal } from '../components/article-modal'
 
 export function ArticleViewer (sources) {
-  const actions = intent(sources.onion.state$)
-  const vdom$ = view(actions.showArticle$)
+  const vdom$ = view(sources.onion.state$)
 
-  actions.showArticle$.drop(1)
+  sources.onion.state$.drop(1)
     .addListener({
       next: () => UIkit.modal('[uk-modal]').show()
     })
@@ -15,15 +14,8 @@ export function ArticleViewer (sources) {
   }
 }
 
-function intent (articleSource) {
-  const showArticle$ = articleSource
-    .startWith('')
-
-  return {
-    showArticle$
-  }
-}
-
 function view (articleSource) {
-  return articleSource.map(ArticleModal)
+  return articleSource
+    .map(ArticleModal)
+    .startWith('')
 }
