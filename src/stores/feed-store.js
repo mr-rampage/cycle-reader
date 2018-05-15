@@ -33,8 +33,10 @@ function model (sources) {
   const defaultReducer$ = xs.of(defaultReducer)
   const articlesReducer$ = sources.IDB.store(ARTICLE_DB).getAll()
     .map(articleReducer)
+  const feedReducer$ = sources.IDB.store(FEED_DB).getAll()
+    .map(feedReducer)
 
-  return xs.merge(defaultReducer$, articlesReducer$)
+  return xs.merge(defaultReducer$, articlesReducer$, feedReducer$)
 }
 
 function filterNewArticles (dbSource, article$) {
@@ -47,8 +49,7 @@ function filterNewArticles (dbSource, article$) {
 function persistArticles (feed$, article$) {
   return article$
     .compose(sampleCombine(feed$))
-    .map(([articles, href]) => articles
-      .map(article => $put(ARTICLE_DB, article))
+    .map(([articles, href]) => articles.map(article => $put(ARTICLE_DB, article))
       .concat($put(FEED_DB, {href}))
     )
     .map(xs.fromArray)
@@ -56,11 +57,17 @@ function persistArticles (feed$, article$) {
 }
 
 function defaultReducer (prevState) {
-  return prevState || {viewing: '', articles: []}
+  return prevState || {'feed-list': {viewing: '', articles: []}, 'feeds': []}
 }
 
 function articleReducer (articles) {
   return function (prevState) {
     return {...prevState, 'feed-list': {viewing: '', articles}}
+  }
+}
+
+function feedReducer (feeds) {
+  return function (prevState) {
+    return {...prevState, feeds}
   }
 }
