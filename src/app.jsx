@@ -6,8 +6,7 @@ import ArticleList from './containers/article-list'
 import Settings from './containers/settings'
 import { ProxyRequest } from './domain/proxy-request'
 import { FetchIndicator } from './containers/fetch-indicator'
-import FeedStore from './containers/feed-store'
-import SettingsStore from './containers/settings-store'
+import Stores from './stores'
 
 export function main (sources) {
   const addFeed = isolate(AddFeed, 'new-feed')(sources)
@@ -15,14 +14,13 @@ export function main (sources) {
   const articleList = isolate(ArticleList, 'feed-list')(sources)
   const settings = isolate(Settings, 'settings')(sources)
 
-  const settingsStore = isolate(SettingsStore, 'settings')(sources)
-  const feedStore = FeedStore(sources)
+  const indexedDb = Stores(sources)
 
   return {
     DOM: view(spinner.DOM, addFeed.DOM, articleList.DOM, settings.DOM),
     FETCH: spinner.FETCH.compose(proxyRequests(sources.onion.state$)),
-    IDB: xs.merge(feedStore.IDB, settingsStore.IDB),
-    onion: xs.merge(addFeed.onion, articleList.onion, spinner.onion, feedStore.onion, settings.onion, settingsStore.onion)
+    IDB: indexedDb.IDB,
+    onion: xs.merge(addFeed.onion, articleList.onion, spinner.onion, settings.onion, indexedDb.onion)
   }
 }
 
