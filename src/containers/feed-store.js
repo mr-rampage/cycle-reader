@@ -4,7 +4,7 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 import { $put } from 'cycle-idb'
 import { ARTICLE_DB, FEED_DB } from '../index'
 
-export function FeedRepository (sources) {
+export default function FeedStore (sources) {
   const actions = isolate(intent, 'new-feed')(sources)
   const reducer$ = model(sources)
 
