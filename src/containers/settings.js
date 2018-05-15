@@ -1,18 +1,13 @@
 import xs from 'xstream'
-import dropRepeats from 'xstream/extra/dropRepeats'
 import { SettingsMenu } from '../components/settings-menu'
-import { $put } from 'cycle-idb'
-import { SETTINGS_DB } from '../index'
 
 export default function Settings (sources) {
   const actions = intent(sources.DOM)
   const reducer$ = model(actions)
   const vdom$ = view(sources.onion.state$)
-  const persist$ = persist(sources)
 
   return {
     DOM: vdom$,
-    IDB: persist$,
     onion: reducer$
   }
 }
@@ -37,13 +32,6 @@ function model (actions) {
 
 function view (state$) {
   return state$.map(SettingsMenu)
-}
-
-function persist (sources) {
-  return sources.onion.state$
-    .drop(1)
-    .compose(dropRepeats())
-    .map(settings => $put(SETTINGS_DB, settings))
 }
 
 function defaultReducer (prevState) {
