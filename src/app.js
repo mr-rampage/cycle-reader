@@ -3,18 +3,19 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 import { ProxyRequest } from './domain/proxy-request'
 import FetchService from './services'
 import Stores from './stores'
-import UI from './containers'
+import Router from './router'
 
 export function main (sources) {
-  const ui = UI(sources)
+  const appRouter = Router(sources)
   const requests = FetchService(sources)
   const indexedDb = Stores(sources)
 
   return {
-    DOM: ui.DOM,
+    DOM: appRouter.DOM,
     FETCH: requests.FETCH.compose(proxyRequests(sources.onion.state$)),
     IDB: indexedDb.IDB,
-    onion: xs.merge(ui.onion, requests.onion, indexedDb.onion)
+    onion: xs.merge(appRouter.onion, requests.onion, indexedDb.onion),
+    router: appRouter.router
   }
 }
 
