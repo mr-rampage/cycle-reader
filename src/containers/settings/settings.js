@@ -1,5 +1,5 @@
 import xs from 'xstream'
-import { SettingsMenu } from '../components/settings-menu'
+import { SettingsMenu } from '../../components/settings-menu'
 
 export default function Settings (sources) {
   const actions = intent(sources.DOM)

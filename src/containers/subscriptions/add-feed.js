@@ -1,7 +1,7 @@
 import xs from 'xstream'
 import sampleCombine from 'xstream/extra/sampleCombine'
-import { Search } from '../components/search'
-import { isUrl } from '../domain/urls'
+import { Search } from '../../components/search'
+import { isUrl } from '../../domain/urls'
 
 export default function AddFeed (sources) {
   const actions = intent(sources.DOM)

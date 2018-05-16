@@ -1,6 +1,6 @@
 import xs from 'xstream'
 import isolate from '@cycle/isolate'
-import { Feed } from '../components/feed'
+import { Feed } from '../../components/feed'
 import { ArticleViewer } from './article-viewer'
 
 export default function ArticleList (sources) {

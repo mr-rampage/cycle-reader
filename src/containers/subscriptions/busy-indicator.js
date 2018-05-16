@@ -1,4 +1,4 @@
-import { Spinner } from '../components/spinner'
+import { Spinner } from '../../components/spinner'
 
 export default function BusyIndicator (sources) {
   const vdom$ = view(sources.onion.state$)

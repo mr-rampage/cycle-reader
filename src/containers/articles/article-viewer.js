@@ -1,5 +1,5 @@
 import * as UIkit from 'uikit'
-import { ArticleModal } from '../components/article-modal'
+import { ArticleModal } from '../../components/article-modal'
 
 export function ArticleViewer (sources) {
   const vdom$ = view(sources.onion.state$)
