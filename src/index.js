@@ -8,10 +8,13 @@ import UIkit from 'uikit'
 import Icons from 'uikit/dist/js/uikit-icons'
 import { makeWebWorkerDriver } from 'cycle-webworker'
 import { makeSelectableDriver } from './drivers/cycle-selectable-driver'
+import { makeHistoryDriver } from '@cycle/history'
 import onionify from 'cycle-onionify'
 import { makeFetchDriver } from './drivers/cycle-fetch-driver'
 import ArticleWorker from './workers/article.worker'
 import runtime from 'serviceworker-webpack-plugin/lib/runtime'
+import { routerify } from 'cyclic-router'
+import switchPath from 'switch-path'
 
 const DATABASE = 'cycle-reader'
 export const ARTICLE_DB = 'article-db'
@@ -24,20 +27,24 @@ UIkit.use(Icons)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => runtime.register())
 }
+run(init(), drivers())
 
-run(onionify(main), {
-  DOM: makeDOMDriver('#root'),
-  IDB: makeIdbDriver(DATABASE, 1, upgradeDb => {
-    switch (upgradeDb.oldVersion) {
-      case 0: {
-        upgradeDb.createObjectStore(ARTICLE_DB, {keyPath: 'link', autoIncrement: true})
-        upgradeDb.createObjectStore(FEED_DB, {keyPath: 'href', autoIncrement: true})
-        upgradeDb.createObjectStore(SETTINGS_DB, {keyPath: 'profile'})
+function drivers () {
+  return {
+    DOM: makeDOMDriver('#root'),
+    IDB: makeIdbDriver(DATABASE, 1, upgradeDb => {
+      switch (upgradeDb.oldVersion) {
+        case 0: {
+          upgradeDb.createObjectStore(ARTICLE_DB, {keyPath: 'link', autoIncrement: true})
+          upgradeDb.createObjectStore(FEED_DB, {keyPath: 'href', autoIncrement: true})
+          upgradeDb.createObjectStore(SETTINGS_DB, {keyPath: 'profile'})
+        }
       }
-    }
-  }),
-  FETCH: selectFetchDriver()
-})
+    }),
+    FETCH: selectFetchDriver(),
+    history: makeHistoryDriver()
+  }
+}
 
 function selectFetchDriver () {
   if (window.Worker) {
@@ -47,4 +54,8 @@ function selectFetchDriver () {
     console.info('Fetch Driver: Fetch')
     return makeFetchDriver()
   }
+}
+
+function init () {
+  return routerify(onionify(main), switchPath)
 }
