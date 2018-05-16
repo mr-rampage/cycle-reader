@@ -4,31 +4,32 @@ RSS PWA Reader with offline support
 
 ## Things Implemented
 
-- Web Workers
-- Service Workers
-- IndexedDB
-- UiKit Components
-- Fetch Driver
-- Web Worker/Fetch Unified Driver
-- Onionify
-- RSS List with offline support
+- [x] Web Workers
+- [x] Service Workers
+- [x] IndexedDB
+- [x] UiKit Components
+- [x] Fetch Driver
+- [x] Web Worker/Fetch Unified Driver
+- [x] Onionify
+- [x] RSS List with offline support
+- [x] PWA
+- [x] Router
 
 ## Things Partially Implemented
-- Testing with Ava
-- PWA
-- Presentation to show off how awesome Cycle.js is
+- [ ] Testing with Ava
+- [ ] Feed/User preferences/profiles
+- [ ] Presentation to show off how awesome Cycle.js is
 
 ## Things to do
-- Full article offline support
-- Firebase support
-- Pull request for Cycle.js Apps
-- Testing with Jest
-- A blog post about how awesome Cycle.js is
-- Periodic article refresh
-- Online/Offline indicator
-- Reduce CSS footprint
-- User preferences
-- Theming
+- [ ] Full article offline support
+- [ ] Firebase support
+- [ ] Pull request for Cycle.js Apps
+- [ ] Testing with Jest
+- [ ] A blog post about how awesome Cycle.js is
+- [ ] Periodic article refresh
+- [ ] Online/Offline indicator
+- [ ] Reduce CSS footprint
+- [ ] Theming
 
 ## Want to help?
 
