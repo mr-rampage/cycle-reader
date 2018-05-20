@@ -67,8 +67,9 @@
     "deploy": "node scripts/deploy.js"
   },
   "babel": {
-    "presets": [
-      "env"
+    "presets": [ "env" ],
+    "plugins": [
+      [ "transform-object-rest-spread" ]
     ]
   },
   "eslintConfig": {
