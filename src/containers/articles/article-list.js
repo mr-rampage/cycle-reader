@@ -50,7 +50,7 @@ function byIndex (a, b) {
 }
 
 function defaultReducer (prevState) {
-  return prevState || {viewing: '', articles: []}
+  return {viewing: '', articles: [], ...prevState}
 }
 
 function articleReducer (viewing) {

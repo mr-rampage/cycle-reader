@@ -69,6 +69,7 @@
   "babel": {
     "presets": [ "env" ],
     "plugins": [
+      [ "transform-react-jsx", {"pragma": "Snabbdom.createElement"}],
       [ "transform-object-rest-spread" ]
     ]
   },
