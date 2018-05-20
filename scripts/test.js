@@ -4,7 +4,7 @@ const path = require('path')
 const spawn = require('cross-spawn')
 const chalk = require('chalk')
 
-const ava = path.resolve(process.cwd(), 'node_modules', '.bin', 'ava')
+const mocha = path.resolve(process.cwd(), 'node_modules', '.bin', 'mocha')
 
 const args = [
   '--colors',
@@ -12,4 +12,4 @@ const args = [
   'src/**/*.spec.js'
 ].filter(Boolean)
 
-spawn(ava, args, {stdio: 'inherit'})
+spawn(mocha, args, {stdio: 'inherit'})
