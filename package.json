@@ -66,42 +66,23 @@
     "build": "node scripts/build.js",
     "deploy": "node scripts/deploy.js"
   },
-  "eslintConfig": {
-    "extends": "standard",
-    "env": {
-      "browser": true
-    }
-  },
   "babel": {
-    "plugins": [
-      [
-        "transform-react-jsx",
-        {
-          "pragma": "Snabbdom.createElement"
-        }
-      ],
-      [
-        "transform-object-rest-spread"
-      ]
-    ],
     "presets": [
-      [
-        "env",
-        {
-          "targets": {
-            "browsers": [
-              "last 2 versions"
-            ]
-          }
-        }
-      ]
+      "env"
     ]
   },
-  "ava": {
-    "require": [
-      "babel-register",
-      "babel-polyfill"
+  "eslintConfig": {
+    "extends": "standard",
+    "plugins": [
+      "mocha"
     ],
-    "babel": "inherit"
+    "globals": {
+      "describe": true,
+      "it": true
+    },
+    "env": {
+      "browser": true,
+      "mocha": true
+    }
   }
 }
