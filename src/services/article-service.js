@@ -16,7 +16,13 @@ export default function FetchArticle (sources) {
 
 function model (fetchedAction) {
   const fetched$ = fetchedAction
-    .map(article => prevState => ({...prevState, article}))
+    .map(articleReducer)
 
   return fetched$
+}
+
+function articleReducer (article) {
+  return function articleReducer (prevState) {
+    return {...prevState, article}
+  }
 }
