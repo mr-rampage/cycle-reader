@@ -2,19 +2,15 @@ import xs from 'xstream'
 import sampleCombine from 'xstream/extra/sampleCombine'
 import { Search } from '../../components/search'
 import { isUrl } from '../../domain/urls'
-import { fetchFeed } from './operations/fetch-feed'
 
 export default function AddFeed (sources) {
   const actions = intent(sources.DOM)
   const reducer$ = model(actions)
   const vdom$ = view(sources.onion.state$)
 
-  const operations = fetchFeed(sources)
-
   return {
-    ...operations,
     DOM: vdom$,
-    onion: xs.merge(reducer$, operations.onion)
+    onion: reducer$
   }
 }
 
@@ -25,6 +21,7 @@ function intent (domSource) {
   const addFeed$ = submit$
     .compose(sampleCombine(search$))
     .map(([submitEvent, inputEvent]) => inputEvent.target.value)
+    .filter(isUrl)
 
   return {
     addFeed$
@@ -35,7 +32,6 @@ function model (actions) {
   const defaultReducer$ = xs.of(defaultReducer)
 
   const uriReducer$ = actions.addFeed$
-    .filter(isUrl)
     .map(uriReducer)
 
   return xs.merge(defaultReducer$, uriReducer$)
