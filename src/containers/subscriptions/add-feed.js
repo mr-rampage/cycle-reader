@@ -2,14 +2,14 @@ import xs from 'xstream'
 import sampleCombine from 'xstream/extra/sampleCombine'
 import { Search } from '../../components/search'
 import { isUrl } from '../../domain/urls'
-import FetchFeed from './operations/feed-service'
+import { fetchFeed } from './operations/fetch-feed'
 
 export default function AddFeed (sources) {
   const actions = intent(sources.DOM)
   const reducer$ = model(actions)
   const vdom$ = view(sources.onion.state$)
 
-  const operations = FetchFeed(sources)
+  const operations = fetchFeed(sources)
 
   return {
     ...operations,

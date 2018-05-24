@@ -4,7 +4,7 @@ import { FetchClient } from '../../../services/fetch-client'
 
 const FETCH_FEED = 'fetch-feed'
 
-export default function FetchFeed (sources) {
+export function fetchFeed (sources) {
   const actions = isolate(FetchClient(FETCH_FEED), 'uri')(sources)
   const reducer$ = model(actions.response)
 
