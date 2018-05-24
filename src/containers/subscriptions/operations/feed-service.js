@@ -1,6 +1,6 @@
 import isolate from '@cycle/isolate'
-import { unmarshal } from '../domain/rss-to-json'
-import { FetchClient } from './fetch-client'
+import { unmarshal } from '../../../domain/rss-to-json'
+import { FetchClient } from '../../../services/fetch-client'
 
 const FETCH_FEED = 'fetch-feed'
 
