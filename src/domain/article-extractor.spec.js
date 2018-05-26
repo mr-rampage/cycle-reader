@@ -11,45 +11,46 @@ describe('Article extractor', () => {
 
   describe('Calculate weighting', () => {
     const calcWeight = fixture.__get__('calcWeight')
+    const rootElementWeightRules = fixture.__get__('rootElementWeightRules')
 
     it('should weight POSITIVE class names by 35 points', () => {
       const element = createElement('<div class="body"></div>')
-      assert.equal(35, calcWeight(element))
+      assert.equal(35, calcWeight(rootElementWeightRules(element)))
     })
 
     it('should weight POSITIVE ids by 40 points', () => {
       const element = createElement('<div id="body"></div>')
-      assert.equal(40, calcWeight(element))
+      assert.equal(40, calcWeight(rootElementWeightRules(element)))
     })
 
     it('should weight JOOMLA elements by 200 points', () => {
       const element = createElement('<div articleBody></div>')
-      assert.equal(200, calcWeight(element))
+      assert.equal(200, calcWeight(rootElementWeightRules(element)))
     })
 
     it('should weight UNLIKELY class names by -20 points', () => {
       const element = createElement('<div class="discuss"></div>')
-      assert.equal(-20, calcWeight(element))
+      assert.equal(-20, calcWeight(rootElementWeightRules(element)))
     })
 
     it('should weight UNLIKELY ids by -20 points', () => {
       const element = createElement('<div id="discuss"></div>')
-      assert.equal(-20, calcWeight(element))
+      assert.equal(-20, calcWeight(rootElementWeightRules(element)))
     })
 
     it('should weight NEGATIVE class names by -50 points', () => {
       const element = createElement('<div class="nav"></div>')
-      assert.equal(-50, calcWeight(element))
+      assert.equal(-50, calcWeight(rootElementWeightRules(element)))
     })
 
     it('should weight NEGATIVE ids by -50 points', () => {
       const element = createElement('<div id="nav"></div>')
-      assert.equal(-50, calcWeight(element))
+      assert.equal(-50, calcWeight(rootElementWeightRules(element)))
     })
 
     it('should weight hidden elements by -50 points', () => {
       const element = createElement('<div style="display: none"></div>')
-      assert.equal(-50, calcWeight(element))
+      assert.equal(-50, calcWeight(rootElementWeightRules(element)))
     })
   })
 
@@ -63,7 +64,7 @@ describe('Article extractor', () => {
   })
 })
 
-function createElement(html) {
+function createElement (html) {
   const dom = new JSDOM(`<!DOCTYPE html><div>${html}</div>`)
   const element = dom.window.document.querySelector('div')
   return element.firstChild
