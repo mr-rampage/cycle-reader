@@ -29,24 +29,20 @@ function prepareDocument (document) {
     .forEach(element => element.remove())
 }
 
-function selectImportantNodes(document) {
+function selectImportantNodes (document) {
   const likelyNodes = ['p', 'div', 'td', 'h1', 'h2', 'article', 'section']
   return document.querySelectorAll(likelyNodes.join(', '))
 }
 
-function getWeight(element, contentIndicator) {
+function getWeight (element, contentIndicator) {
   let weight = calcWeight(element)
   weight += Math.round(ownTextWeight(element) / 100 * 10)
   // weight += weightChildNodes(element, contentIndicator)
   return weight
 }
 
-function regexRule (element, regex, property) {
-  return !!element[property] && regex.test(element[property])
-}
-
 function isJoomla (element) {
-  return element.attributes['articleBody']
+  return element.attributes['articleBody'] !== undefined
 }
 
 function isHidden (element) {
@@ -58,15 +54,13 @@ function isHidden (element) {
 }
 
 function calcWeight (element) {
-  const elementTest = regexRule.bind(null, element)
-
   const calculation = [
-    [elementTest.bind(null, POSITIVE, 'className'), 35],
-    [elementTest.bind(null, POSITIVE, 'id'), 40],
-    [elementTest.bind(null, UNLIKELY, 'className'), -20],
-    [elementTest.bind(null, UNLIKELY, 'id'), -20],
-    [elementTest.bind(null, NEGATIVE, 'className'), -50],
-    [elementTest.bind(null, NEGATIVE, 'id'), -50],
+    [() => POSITIVE.test(element.className), 35],
+    [() => POSITIVE.test(element.id), 40],
+    [() => UNLIKELY.test(element.className), -20],
+    [() => UNLIKELY.test(element.id), -20],
+    [() => NEGATIVE.test(element.className), -50],
+    [() => NEGATIVE.test(element.id), -50],
     [isJoomla.bind(null, element), 200],
     [isHidden.bind(null, element), -50]
   ]
