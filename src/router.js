@@ -26,6 +26,8 @@ export default function Router (sources) {
   return {
     DOM: view(page$.map(propOrNever.bind(null, 'DOM')).flatten()),
     router: navigation$,
+    FETCH: page$.map(propOrNever.bind(null, 'FETCH')).flatten(),
+    IDB: page$.map(propOrNever.bind(null, 'IDB')).flatten(),
     onion: page$.map(propOrNever.bind(null, 'onion')).flatten()
   }
 }

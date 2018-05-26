@@ -12,8 +12,8 @@ export function main (sources) {
 
   return {
     DOM: appRouter.DOM,
-    FETCH: requests.FETCH.compose(proxyRequests(sources.onion.state$)),
-    IDB: indexedDb.IDB,
+    FETCH: xs.merge(appRouter.FETCH, requests.FETCH).compose(proxyRequests(sources.onion.state$)),
+    IDB: xs.merge(appRouter.IDB, indexedDb.IDB),
     onion: xs.merge(appRouter.onion, requests.onion, indexedDb.onion),
     router: appRouter.router
   }
