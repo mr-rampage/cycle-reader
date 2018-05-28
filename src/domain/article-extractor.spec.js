@@ -12,6 +12,7 @@ describe('Article extractor', () => {
   describe('Calculate weighting', () => {
     const calcWeight = fixture.__get__('calcWeight')
     const rootElementWeightRules = fixture.__get__('rootElementWeightRules')
+    const fifty = 'iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'
 
     it('should weight POSITIVE class names by 35 points', () => {
       const element = createElement('<div class="body"></div>')
@@ -51,6 +52,42 @@ describe('Article extractor', () => {
     it('should weight hidden elements by -50 points', () => {
       const element = createElement('<div style="display: none"></div>')
       assert.equal(-50, calcWeight(rootElementWeightRules(element)))
+    })
+
+    it('should weight elements containing a caption class by 30 points', () => {
+      const element = createElement('<div>Hello<span class="caption">Wor<span>ld</span></span></div>')
+      assert.equal(30, calcWeight(rootElementWeightRules(element)))
+    })
+
+    it('should weight only child paragraphs with headers', () => {
+      const element = createElement(`<div><h1></h1><h2></h2><p>${fifty}</p><p>${fifty}</p></div>`)
+      assert.equal(40, calcWeight(rootElementWeightRules(element)))
+    })
+  })
+
+  describe('child weights', () => {
+    const calcWeight = fixture.__get__('calcWeight')
+    const childElementWeightRules = fixture.__get__('childElementWeightRules')
+
+    it('should weight elements when a contentIndicator is defined', () => {
+      const element = createElement('<h3>Hello</h3>')
+      assert.equal(100, calcWeight(childElementWeightRules('Hello', element)))
+    })
+
+    it('should weight h1,h2 elements by 30 points', () => {
+      const element = createElement('<h1>Hello</h1><h2>World</h2>')
+      assert.equal(30, calcWeight(childElementWeightRules(null, element)))
+    })
+
+    it('should weight div,p elements relative to its text length', () => {
+      const element = createElement('<p>Hello</p>')
+      assert.equal(0.2, calcWeight(childElementWeightRules(null, element)))
+    })
+
+    it('should weight by text content up to a min of 50 points', () => {
+      const twoHundredChars = 'iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'
+      const element = createElement(`<h3>${twoHundredChars}</h3>`)
+      assert.equal(50, calcWeight(childElementWeightRules(null, element)))
     })
   })
 
