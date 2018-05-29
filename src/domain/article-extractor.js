@@ -15,10 +15,9 @@ function findThumbnail (document) {
 
 function findBestMatch (contentIndicator, [bestMatch, maxWeight], element) {
   let currentWeight = getWeight(element, contentIndicator)
-  if (currentWeight > maxWeight) {
-    return [element, currentWeight]
-  }
-  return [bestMatch, maxWeight]
+  return (currentWeight > maxWeight)
+    ? [element, currentWeight]
+    : [bestMatch, maxWeight]
 }
 
 function stripElements (document, ...elementsToRemove) {
