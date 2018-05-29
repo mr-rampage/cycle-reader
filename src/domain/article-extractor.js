@@ -14,11 +14,9 @@ function findThumbnail (document) {
 }
 
 function findBestMatch (contentIndicator, [bestMatch, maxWeight], element) {
-  if (maxWeight < 300) {
-    let currentWeight = getWeight(element, contentIndicator)
-    if (currentWeight > maxWeight) {
-      return [element, currentWeight]
-    }
+  let currentWeight = getWeight(element, contentIndicator)
+  if (currentWeight > maxWeight) {
+    return [element, currentWeight]
   }
   return [bestMatch, maxWeight]
 }
@@ -65,13 +63,13 @@ function ownTextWeight (element) {
 
 function rootElementWeightRules (element) {
   // Most likely positive candidates
-  const POSITIVE = /(^(body|content|h?entry|main|page|post|text|blog|story|haupt))|arti(cle|kel)|instapaper_body/
+  const POSITIVE = /(^(body|content|h?entry|main|page|post|text|blog|story|haupt))|arti(cle|kel)|instapaper_body/i
 
   // Unlikely candidates
-  const UNLIKELY = /com(bx|ment|munity)|dis(qus|cuss)|e(xtra|[-]?mail)|foot|header|menu|re(mark|ply)|rss|sh(are|outbox)|social|twitter|facebook|sponsora(d|ll|gegate|rchive|ttachment)|(pag(er|ination))|popup|print|login|si(debar|gn|ngle)|hinweis|expla(in|nation)?|metablock/
+  const UNLIKELY = /com(bx|ment|munity)|dis(qus|cuss)|e(xtra|[-]?mail)|foot|header|menu|re(mark|ply)|rss|sh(are|outbox)|social|twitter|facebook|sponsora(d|ll|gegate|rchive|ttachment)|(pag(er|ination))|popup|print|login|si(debar|gn|ngle)|hinweis|expla(in|nation)?|metablock/i
 
   // Most likely negative candidates
-  const NEGATIVE = /nav($|igation)|user|com(ment|bx)|(^com-)|contact|foot|masthead|(me(dia|ta))|outbrain|promo|related|scroll|(sho(utbox|pping))|sidebar|sponsor|tags|tool|widget|player|disclaimer|toc|infobox|vcard/
+  const NEGATIVE = /nav($|igation)|user|com(ment|bx)|(^com-)|contact|foot|masthead|(me(dia|ta))|outbrain|promo|related|scroll|(sho(utbox|pping))|sidebar|sponsor|tags|tool|widget|player|disclaimer|toc|infobox|vcard|ad-/i
 
   return [
     [() => POSITIVE.test(element.className), 35],
