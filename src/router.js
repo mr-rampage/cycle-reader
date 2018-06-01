@@ -51,6 +51,7 @@ function navBar (sources) {
 
 function viewArticle (sources) {
   return sources.onion.state$
+    .filter(state => state['feed-list'] && state['feed-list']['article'])
     .map(state => state['feed-list']['article'])
     .compose(dropRepeats())
     .filter(article => article)

@@ -8,7 +8,7 @@ import UIkit from 'uikit'
 import Icons from 'uikit/dist/js/uikit-icons'
 import { makeWebWorkerDriver } from 'cycle-webworker'
 import { makeSelectableDriver } from './drivers/cycle-selectable-driver'
-import { makeHistoryDriver } from '@cycle/history'
+import { makeHashHistoryDriver } from '@cycle/history'
 import onionify from 'cycle-onionify'
 import { makeFetchDriver } from './drivers/cycle-fetch-driver'
 import ArticleWorker from './workers/article.worker'
@@ -42,7 +42,9 @@ function drivers () {
       }
     }),
     FETCH: selectFetchDriver(),
-    history: makeHistoryDriver()
+    history: makeHashHistoryDriver({
+      hashType: 'hashbang'
+    })
   }
 }
 
